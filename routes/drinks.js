@@ -23,7 +23,7 @@ router
 
 router
     .route('/own/add')
-    .post(authenticate, validateBody(schemas.addSchema), ctrl.addOwnDrink)    
+    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink)    
 
 router
     .route('/:id')

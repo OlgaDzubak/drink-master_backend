@@ -13,10 +13,13 @@ const { httpError, ctrlWrapper } = require('../helpers/');
   const searchDrinks = async (req, res) => {
   }
 
-  const  getDrinkById = async (req, res) => {
+  const getDrinkById = async (req, res) => {
   }
 
-  const addOwnDrink = async (req, res) => {
+  const addDrink = async (req, res) => {
+  } 
+
+  const deleteDrinkById = async (req, res) => {
   } 
 
   const getAllDrinks = async(req, res)=>{
@@ -37,7 +40,8 @@ module.exports = {
   getPopularDrinks :  ctrlWrapper(getPopularDrinks),
   searchDrinks:  ctrlWrapper(searchDrinks),
   getDrinkById:  ctrlWrapper(getDrinkById),
-  addOwnDrink:  ctrlWrapper(addOwnDrink),
+  addDrink:  ctrlWrapper(addDrink),
+  deleteDrinkById: ctrlWrapper(deleteDrinkById),
   getAllDrinks:  ctrlWrapper(getAllDrinks),
   addDrinkToFavorite:  ctrlWrapper(addDrinkToFavorite),
   removeDrinkFromFavorite:  ctrlWrapper(removeDrinkFromFavorite),

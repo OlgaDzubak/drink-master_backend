@@ -3,7 +3,27 @@ const joi = require("joi");
 
 
 // ----- СХЕМИ МОДЕЛІ ДАНИХ КОЛЕКЦІЇ "RECIPES" -------------------------------------------------------------------
-const recipeSchema = new Schema(
+  
+// схема для поля ingredients
+  const ingSchema = new Schema(
+    { 
+        title: {
+            type: String,
+            required: true,
+        },
+        measure: {
+            type: String,
+            required: true,
+            maxlenght: 30,
+        },
+        ingredientId : {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
+    }
+  );
+
+  const recipeSchema = new Schema(
     {
         drink:{
             type: String,
@@ -114,25 +134,6 @@ const recipeSchema = new Schema(
     }
   );
 
-  // схема для поля ingredients
-  const ingSchema = new Schema(
-    { 
-        title: {
-            type: String,
-            required: true,
-        },
-        measure: {
-            type: String,
-            required: true,
-            maxlenght: 30,
-        },
-        ingredientId : {
-            type: Schema.Types.ObjectId,
-            required: true,
-        },
-    }
-  );
-
   const Recipe = model('Recipe', recipeSchema);   // створюємо модель Recipe
 
 
@@ -153,7 +154,6 @@ const addSchema = joi.object({
 const schemas = {
   getSchema,
   addSchema,
-
 }
 
-module.exports = { Ingridient, schemas, };
+module.exports = { Recipe, schemas, };

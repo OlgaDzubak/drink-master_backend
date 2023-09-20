@@ -9,7 +9,15 @@ const path = require("path");
 const fs = require("fs").promises;
 require('dotenv').config();
 
-const {SECRET_KEY, BASE_URL} = process.env; 
+const {SECRET_KEY, BASE_URL} = process.env;
+
+const {v2:cloudinary} = require('cloudinary');
+          
+cloudinary.config({ 
+  cloud_name: 'dxvnh0oip', 
+  api_key: '855496256414967', 
+  api_secret: '***************************' 
+});
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
