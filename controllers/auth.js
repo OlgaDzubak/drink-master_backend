@@ -11,7 +11,7 @@ require('dotenv').config();
 
 const {SECRET_KEY, BASE_URL} = process.env; 
 
-//------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для реєстрації, авторизації, роза) ----------------------------
+//------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для реєстрації, авторизації, розаавторизації) ----------------------------
 
 // + реєстрація нового користувача
   const signup = async (req, res) => {
@@ -107,7 +107,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     });
   }
 
-
+  
 // + розавторизація користувача
   const signout = async (req, res) => {
     const {_id} = req.user;
@@ -115,7 +115,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
     if (!user) { throw httpError(401, "Not authorized"); }
     res.status(204).json({});
   }
-
 
 
 //---------------------------------------------------------------------------------------------------------

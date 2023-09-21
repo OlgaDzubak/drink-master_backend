@@ -70,7 +70,7 @@ const User = model('User', userSchema);    // створюємо модель Us
 
 
 
-// ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту ДО КОЛЕКЦІЇ USERS -----------------------------------------------------------
+// ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту ДО КОЛЕКЦІЇ USERS (кастомні повідомлення про помилки)----------------------------
 const signUpSchema = joi.object({
     name : joi.string().required().min(2).max(30).error(errors => {
         errors.forEach(err => {
@@ -203,7 +203,7 @@ const updateSchema = joi.object({
                 }
         });
         return errors;
-        }),
+    }),
 })
 
 const emailSchema = joi.object({
