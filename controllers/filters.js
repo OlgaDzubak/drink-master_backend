@@ -1,6 +1,6 @@
 const {Recipe} = require('../db/models/recipe');
 const {Ingridient} = require('../db/models/ingridient');
-const { httpError, ctrlWrapper } = require('../helpers/');
+const { ctrlWrapper } = require('../helpers/');
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /filters) ----------------------------

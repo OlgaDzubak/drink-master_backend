@@ -18,6 +18,7 @@ const joi = require("joi");
         },
         ingredientId : {
             type: Schema.Types.ObjectId,
+            ref: 'Ingridient',
             required: true,
         },
     }
@@ -27,7 +28,7 @@ const joi = require("joi");
     {
         drink:{
             type: String,
-            required: [true, 'Set drink title for recipe'],
+            required: [true, 'Set drink title for recipe (a string between 2 and 50 characters long)'],
             minlength: 2,
             maxlenght: 50,
         },
@@ -35,18 +36,22 @@ const joi = require("joi");
             type: String,
             minlength: 2,
             maxlenght: 50,
+            default: "Sorry, not specified",
         },
         tags:{
             type: String,
         },
         video:{
             type: String,
+            defailt: "Sorry, not specified",
         },
         category:{
             type: String,
+            required: [true, 'Set category of drink'],
         },
         IBA:{
             type: String,
+            default: "Sorry, not specified",
         },
         alcoholic:{
             type: String,
@@ -68,49 +73,42 @@ const joi = require("joi");
         instructions:{
             type: String,
             required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsES:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsDE:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsFR:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsIT:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsRU:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsPL:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         instructionsUK:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
-            minlength: 20,
+            minlength: 10,
             maxlenght: 500,
         },
         drinkThumb:{
@@ -119,14 +117,20 @@ const joi = require("joi");
         },
         ingredients:{
             type : [ingSchema],    // перевірити
+            required: [true, 'Set ingredients for recipe'],
+            minlength: 1,
             default: undefined,
         },
         shortDescription:{
             type: String,
-            required: [true, 'Set instructions for recipe'],
             minlength: 10,
             maxlenght: 200,
         },
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+          }
     },
     {  
         versionKey: false,
@@ -138,16 +142,326 @@ const joi = require("joi");
 
 
 
-
-
-
 // ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту КОЛЕКЦІЇ "RECIPES"-----------------------------------------------------------
 
 const getSchema = joi.object({
+
 });
 
 const addSchema = joi.object({
-    
+    //назва напою
+    drink : joi.string().required().min(2).max(50).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "any.required": 
+                                    err.message = "missing required drink field";
+                                    break;
+                    case "string.empty":
+                                    err.message = "drink field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `drink field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `drink field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    //альтернативна назва напою
+    drinkAlternate : joi.string().min(2).max(50).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "drinkAlternate field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `drinkAlternate field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `drinkAlternate field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    // video
+    video : joi.string().error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "video field should not be empty!";
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),  
+    IBA : joi.string().error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "IBA field should not be empty!";
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }), 
+    //категорыя напою
+    category : joi.string().required().error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "any.required": 
+                                    err.message = "missing required category field";
+                                    break;
+                    case "string.empty":
+                                    err.message = "category field should not be empty!";
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),    
+    //опис напою
+    description : joi.string().required().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "any.required": 
+                                    err.message = "missing required description field";
+                                    break;
+                    case "string.empty":
+                                    err.message = "description field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `description field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `description field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+
+    //інструкція приготування
+    instructions : joi.string().required().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "any.required": 
+                                    err.message = "missing required description field";
+                                    break;
+                    case "string.empty":
+                                    err.message = "description field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `description field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `description field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsES : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsES field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsES field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsES field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsDE : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsDE field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsDE field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsDE field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsFR : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsFR field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsFR field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsFR field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsIT : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsIT field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsIT field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsIT field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionRU : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionRU field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionRU field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionRU field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsPL : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsPL field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsPL field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsPL field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    instructionsUA : joi.string().min(10).max(500).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "instructionsUA field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `instructionsUA field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `instructionsUA field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+
+    //поле алкогольний або безалкогольний
+    alcoholic : joi.string().required().valid("Alcoholic","Non alcoholic").error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "any.required": 
+                                    err.message = "missing required alcoholic field";
+                                    break;
+                    case "string.empty":
+                                    err.message = "alcoholic field should not be empty!";
+                                    break;
+                    case "any.invalid":
+                                    err.message = `alcoholic field should contain string "Alcoholic" or "Non alcoholic"!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+    //поле glass-тип эмності для напою
+    glass : joi.string().required().error(errors => {
+    errors.forEach(err => {
+        switch (err.code) {
+                case "any.required": 
+                                err.message = "missing required glass field";
+                                break;
+                case "string.empty":
+                                err.message = "glass field should not be empty!";
+                                break;
+            }
+    });
+    return errors;
+    }),
+    drinkThumb : joi.string().error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "drinkThumb field should not be empty!";
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }), 
+    //масив інгрідієнтів для приготування
+    ingredients : joi.array().required().min(1).error(errors => {
+    errors.forEach(err => {
+        switch (err.code) {
+                case "any.required": 
+                                err.message = "missing required ingredients field";
+                                break;
+                case "array.min":
+                                err.message = "ingredients field should not be empty!";
+                                break;
+            }
+    });
+    return errors;
+    }),
 });
 
 
