@@ -1,4 +1,4 @@
-const { User } = require('../db/models/user'); // Переконайтеся, що ви правильно імпортуєте моделі
+const { User } = require('../db/models/user'); 
 const {Recipe} = require('../db/models/recipe');
 const { httpError, ctrlWrapper } = require('../helpers/');
 
