@@ -15,6 +15,6 @@ router
 
 router
     .route('/glasses')
-    .patch(authenticate, ctrl.getGlasses);
+    .get(authenticate, ctrl.getGlasses);
 
 module.exports = router;

@@ -13,7 +13,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для реєстрації, авторизації, роза) ----------------------------
 
-// реєстрація нового користувача
+// + реєстрація нового користувача
   const signup = async (req, res) => {
 
     const {name, email, password} = req.body;
@@ -27,7 +27,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const verificationToken = v4();
     const newUser = await User.create({...req.body, password: hashPassword, avatarURL, verificationToken,});
 
-    //відправляємо на email юзера лист для верифікації пошти 
+   // відправляємо на email юзера лист для верифікації пошти 
     const verifyEmail = {
       to: email,
       subject: "Verify email",
@@ -46,7 +46,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     
   }
 
-// верифікація електронної пошти юзера  
+// + верифікація електронної пошти юзера  
   const verifyEmail = async(req, res) => {
   const {verificationToken} = req.params;
 
@@ -58,7 +58,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   res.json({message: "Verification successful"})
   }
 
-// повторная верифікація електроної пошти користувача
+// + повторная верифікація електроної пошти користувача
   const resendVerifyEmail = async(req, res) => {
     const {email} = req.body;
 
@@ -79,21 +79,22 @@ const {SECRET_KEY, BASE_URL} = process.env;
   }
 
 
-// авторизація користувача
+// + авторизація користувача
   const signin = async (req, res) => {
     const {email, password} = req.body;
-
+    
     //перевіряємо наявність користувача 
     const user = await User.findOne({email});    // шукаємо за email
+    
     if (!user) { throw httpError(401, "Email or password is wrong"); }
-
+    
     const comparePassword = await bcrypt.compare(password, user.password);   // перевіряємо пароль
     if (!comparePassword){ throw httpError(401, "Email or password is wrong"); }
 
     if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
 
     //створюємо токен
-    const payload = { id: user._id };
+    const payload = { id: user._id }; 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
     await User.findByIdAndUpdate(user._id, { token });  // записуємо токен в базу користувачів
 
@@ -107,7 +108,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   }
 
 
-// розавторизація користувача
+// + розавторизація користувача
   const signout = async (req, res) => {
     const {_id} = req.user;
     const user = await User.findByIdAndUpdate(_id, {token: ""});

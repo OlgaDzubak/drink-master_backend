@@ -7,8 +7,9 @@ const router = express.Router();
 
 
 // SIGN UP
+
 router
-    .route('/signup')
+    .route('/signup') 
     .post(validateBody(schemas.signUpSchema), ctrl.signup);          //запит на реєстрацію нового користувача
 
 router
@@ -22,7 +23,7 @@ router
 
 // SIGN IN
 router
-.   route('/sighin')
+    .route('/signin')
     .post(validateBody(schemas.signInSchema), ctrl.signin);           //запит на авторизацію існуючого користувача
 
 router

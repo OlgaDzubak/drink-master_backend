@@ -62,7 +62,7 @@ const userSchema = new Schema(
     {  
         versionKey: false,
         timestamps: true,
-    }
+    } 
 );
 
 const User = model('User', userSchema);    // створюємо модель User
@@ -142,7 +142,7 @@ const signUpSchema = joi.object({
                                 break;
                 }
         });
-        return errors;
+        return errors; 
     }),
 });
 
@@ -185,6 +185,27 @@ const signInSchema = joi.object({
         }),
 });
 
+const updateSchema = joi.object({
+    name : joi.string().min(2).max(30).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "name field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `name field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `name field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+        }),
+})
+
 const emailSchema = joi.object({
     email: joi.string().pattern(emailRegExp).required().error(errors => {
             errors.forEach(err => {
@@ -209,6 +230,7 @@ const emailSchema = joi.object({
 const schemas = {
     signUpSchema,
     signInSchema,
+    updateSchema,
     emailSchema,
 }
 

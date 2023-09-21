@@ -1,7 +1,7 @@
 const express = require('express');
 const ctrl = require('../controllers/drinks');
 const {validateBody, validateId, validateFavorite, validateQuery, authenticate}  = require("../middlewares");
-const {schemas} = require("../db/models/recipes");
+const {schemas} = require("../db/models/recipe");
 const router = express.Router();
 
 

@@ -7,13 +7,14 @@ const router = express.Router();
 
 
 // МАРШРУТИ ДЛЯ ЗАЛОГІНЕНОГО ЮЗЕРА
+
 router
     .route('/current')
     .get(authenticate, ctrl.getCurrent);                             //запит на отримання інформації про поточного користувача
 
 router
     .route('/update')
-    .patch(authenticate, validateBody(schemas.updateSchema), ctrl.updateUser); //запит на оновлення даних про користувача
+    .patch(authenticate, ctrl.updateUser); //запит на оновлення даних про користувача
 
 router
     .route('/sibscribe')

@@ -1,4 +1,4 @@
-const {Recipes} = require('../db/models/recipes');
+const {Recipe} = require('../db/models/recipe');
 const { httpError, ctrlWrapper } = require('../helpers/');
 
 
