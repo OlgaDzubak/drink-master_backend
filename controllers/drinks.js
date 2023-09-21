@@ -147,7 +147,7 @@ const searchDrinks = async (req, res) => {
 // отримання всіх напоїв поточного(залогіненого) юзера
   const getAllDrinks = async(req, res)=>{ 
     console.log("req.user=", req.user);
-    const {_id: owner} = req.user;
+    const {id: owner} = req.user;
     const filter = {owner};
     const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
     res.json(result);
