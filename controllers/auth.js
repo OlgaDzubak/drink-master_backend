@@ -31,7 +31,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const verifyEmail = {
       to: email,
       subject: "Verify email",
-      html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click verify email</a>`
+      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${verificationToken}">Click verify email</a>`
     };
 
     await sendEmail(verifyEmail);
@@ -70,7 +70,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const verifyEmail = {
       to: email,
       subject: "Verify email",
-      html: `<a target="_blank" href="${BASE_URL}/users/verify/${user.verificationToken}">Click verify email</a>`
+      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${user.verificationToken}">Click verify email</a>`
     };
 
     await sendEmail(verifyEmail);
@@ -86,10 +86,10 @@ const {SECRET_KEY, BASE_URL} = process.env;
     //перевіряємо наявність користувача 
     const user = await User.findOne({email});    // шукаємо за email
     
-    if (!user) { throw httpError(401, "Email or password is wrong"); }
+    if (!user) { throw httpError(401, "Email is wrong"); }
     
     const comparePassword = await bcrypt.compare(password, user.password);   // перевіряємо пароль
-    if (!comparePassword){ throw httpError(401, "Email or password is wrong"); }
+    if (!comparePassword){ throw httpError(401, "Password is wrong"); }
 
     if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
 
