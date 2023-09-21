@@ -165,14 +165,14 @@ const searchDrinks = async (req, res) => {
 //---------------------------------------------------------------------------------------------------------
 
 module.exports = {
-  getDrinksForMainPage : ctrlWrapper(getDrinksForMainPage),
-  getPopularDrinks : ctrlWrapper(getPopularDrinks),
-  searchDrinks : ctrlWrapper(searchDrinks),
-  getDrinkById : ctrlWrapper(getDrinkById),
-  addDrink : ctrlWrapper(addDrink),
-  deleteDrinkById : ctrlWrapper(deleteDrinkById),
-  getAllDrinks : ctrlWrapper(getAllDrinks),
-  addDrinkToFavorite : ctrlWrapper(addDrinkToFavorite),
-  removeDrinkFromFavorite : ctrlWrapper(removeDrinkFromFavorite),
-  getPopularDrinks : ctrlWrapper(getPopularDrinks),
+  getDrinksForMainPage    :  ctrlWrapper(getDrinksForMainPage),
+  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
+  searchDrinks            :  ctrlWrapper(searchDrinks),
+  getDrinkById            :  ctrlWrapper(getDrinkById),
+  addDrink                :  ctrlWrapper(addDrink),
+  deleteDrinkById         :  ctrlWrapper(deleteDrinkById),
+  getAllDrinks            :  ctrlWrapper(getAllDrinks),
+  addDrinkToFavorite      :  ctrlWrapper(addDrinkToFavorite),
+  removeDrinkFromFavorite :  ctrlWrapper(removeDrinkFromFavorite),
+  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
 }
