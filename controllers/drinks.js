@@ -1,10 +1,12 @@
 const { User } = require('../db/models/user'); 
 const {Recipe} = require('../db/models/recipe');
-const { httpError, ctrlWrapper, toUpperCaseFirst } = require('../helpers/');
+const { httpError, ctrlWrapper} = require('../helpers/');
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
 
+//+ отримання масиву напоїв id для поточного(залогіненого) юзера
 const getDrinksForMainPage = async (req, res) => {
+
   const userAge = 18;
   const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non_Alcoholic';
 
@@ -36,14 +38,14 @@ const getDrinksForMainPage = async (req, res) => {
         .select('-_id drink alcoholic drinkThumb');
     }
   }
-    drinksForMainPage[category] = cocktails;
+  drinksForMainPage[category] = cocktails;
   res.json(drinksForMainPage);
-};
+}; 
   
 
 const getPopularDrinks = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const user = await User.findById(userId);
     if (!user || !user.favorites || user.favorites.length === 0) {
@@ -79,7 +81,7 @@ const getPopularDrinks = async (req, res) => {
 const searchDrinks = async (req, res) => {
   try {
     const userAge = 18;
-    const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non_Alcoholic';
+    const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
     
     const { category, ingredient, keyword, page, pageSize } = req.query;
 
@@ -116,7 +118,7 @@ const searchDrinks = async (req, res) => {
   }
 };
 
-//+ отримання напою за цього _id для поточного(залогіненого) юзера
+//+ отримання напою за йього _id для поточного(залогіненого) юзера
   const getDrinkById = async (req, res) => {
     const {id} = req.params;
     const result = await Recipe.findById(id);
@@ -128,9 +130,9 @@ const searchDrinks = async (req, res) => {
   const addDrink = async (req, res) => {
     const {_id: owner} = req.user;
         
-    const result = await Recipe.create({...req.body, owner});
+    const result = await Recipe.create({...req.body, owner});    
 
-    if (!result) { throw httpError(400, `Drink with the name '${name}' is elready in the list`); }
+    if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
     res.status(201).json(result);
   } 
 
@@ -141,6 +143,12 @@ const searchDrinks = async (req, res) => {
     if (!result) { throw httpError(404, "Not found"); }
     res.json({ message : "drink deleted" });
   } 
+
+
+
+
+
+
 
 // отримання всіх напоїв поточного(залогіненого) юзера
   const getAllDrinks = async(req, res)=>{
@@ -173,5 +181,5 @@ module.exports = {
   getAllDrinks            :  ctrlWrapper(getAllDrinks),
   addDrinkToFavorite      :  ctrlWrapper(addDrinkToFavorite),
   removeDrinkFromFavorite :  ctrlWrapper(removeDrinkFromFavorite),
-  getFavoriteDerinks      :  ctrlWrapper(getFavoriteDrinks),
+  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
 }

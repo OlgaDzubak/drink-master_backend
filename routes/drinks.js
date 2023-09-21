@@ -43,7 +43,7 @@ router
 
 router
     .route('/favorite')
-    .get(authenticate, ctrl.getFavoriteDrinks)
+    .get(authenticate, ctrl.getPopularDrinks)
 
 
 

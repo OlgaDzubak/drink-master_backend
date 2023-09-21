@@ -31,6 +31,7 @@ const joi = require("joi");
             required: [true, 'Set drink title for recipe (a string between 2 and 50 characters long)'],
             minlength: 2,
             maxlenght: 50,
+            unique: true,
         },
         drinkAlternate:{
             type: String,
