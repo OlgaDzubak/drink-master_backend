@@ -12,11 +12,11 @@ const { httpError, ctrlWrapper, toUpperCaseFirst } = require('../helpers/');
   }
 
   const searchDrinks = async (req, res) => {
+
   }
 
 //+ отримання напою за цього _id для поточного(залогіненого) юзера
   const getDrinkById = async (req, res) => {
-    console.log("req.params",req.params);
     const {id} = req.params;
     const result = await Recipe.findById(id);
     if (!result) { throw httpError(404, "Not found"); }
