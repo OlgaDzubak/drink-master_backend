@@ -8,7 +8,7 @@ const { httpError, ctrlWrapper} = require('../helpers/');
 const getDrinksForMainPage = async (req, res) => {
 
   const userAge = 18;
-  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non_Alcoholic';
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non аlcoholic';
 
   const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
 
@@ -144,20 +144,13 @@ const searchDrinks = async (req, res) => {
     res.json({ message : "drink deleted" });
   } 
 
-
-
-
-
-
-
 // отримання всіх напоїв поточного(залогіненого) юзера
   const getAllDrinks = async(req, res)=>{
-    // const {id: owner} = req.user;
-    
-    // const filter = {owner};
-    
-    // const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
-    // res.json(result);
+    console.log("req.user=", req.user);
+    const {_id: owner} = req.user;
+    const filter = {owner};
+    const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
+    res.json(result);
   }
 
   const addDrinkToFavorite = async (req, res) => {
@@ -172,14 +165,14 @@ const searchDrinks = async (req, res) => {
 //---------------------------------------------------------------------------------------------------------
 
 module.exports = {
-  getDrinksForMainPage    :  ctrlWrapper(getDrinksForMainPage),
-  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
-  searchDrinks            :  ctrlWrapper(searchDrinks),
-  getDrinkById            :  ctrlWrapper(getDrinkById),
-  addDrink                :  ctrlWrapper(addDrink),
-  deleteDrinkById         :  ctrlWrapper(deleteDrinkById),
-  getAllDrinks            :  ctrlWrapper(getAllDrinks),
-  addDrinkToFavorite      :  ctrlWrapper(addDrinkToFavorite),
-  removeDrinkFromFavorite :  ctrlWrapper(removeDrinkFromFavorite),
-  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
+  getDrinksForMainPage : ctrlWrapper(getDrinksForMainPage),
+  getPopularDrinks : ctrlWrapper(getPopularDrinks),
+  searchDrinks : ctrlWrapper(searchDrinks),
+  getDrinkById : ctrlWrapper(getDrinkById),
+  addDrink : ctrlWrapper(addDrink),
+  deleteDrinkById : ctrlWrapper(deleteDrinkById),
+  getAllDrinks : ctrlWrapper(getAllDrinks),
+  addDrinkToFavorite : ctrlWrapper(addDrinkToFavorite),
+  removeDrinkFromFavorite : ctrlWrapper(removeDrinkFromFavorite),
+  getPopularDrinks : ctrlWrapper(getPopularDrinks),
 }
