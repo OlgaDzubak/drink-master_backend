@@ -193,10 +193,10 @@ const removeDrinkFromFavorite = async (req, res) => {
      const { id } = req.params;
   const { _id: userId } = req.user;
 
-  const drink = await Drink.findById(id);
+  const drink = await Recipe.findById(id);
 
   if (!drink) {
-    throw HttpError(404, "Not Found");
+    throw httpError(404, "Not Found");
   }
 
    const isFavorite = drink.users ? drink.users.includes(userId) : true;
@@ -204,7 +204,7 @@ const removeDrinkFromFavorite = async (req, res) => {
   let result;
 
   if (isFavorite) {
-    result = await Drink.findByIdAndUpdate(
+    result = await Recipe.findByIdAndUpdate(
       drink._id,
       {
         $pull: { users: userId },
@@ -212,7 +212,7 @@ const removeDrinkFromFavorite = async (req, res) => {
       { new: true }
     );
   } else {
-    throw HttpError(403, `${drink.drink} is not in your favorites.`);
+    throw httpError(403, `${drink.drink} is not in your favorites.`);
   }
 
   res.json({ result });
