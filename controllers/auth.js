@@ -101,8 +101,9 @@ const {SECRET_KEY, BASE_URL} = process.env;
     res.status(200).json( {
       token,
       "user": {
+        "name": user.name,
         "email": user.email,
-        "subscription": user.subscription
+        "avatarURL": user.avatarURL,
       }
     });
   }
