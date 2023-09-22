@@ -38,7 +38,7 @@ router
     .post(authenticate, validateId, ctrl.addDrinkToFavorite) 
 
 router
-    .route('/favorite/remove:id')
+    .route('/favorite/remove')
     .delete(authenticate, validateId, ctrl.removeDrinkFromFavorite)    
 
 router
