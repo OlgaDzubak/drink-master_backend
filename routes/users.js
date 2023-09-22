@@ -14,7 +14,7 @@ router
 
 router
     .route('/update')
-    .patch(authenticate, ctrl.updateUser); //запит на оновлення даних про користувача
+    .patch(authenticate, upload.single("avatar"), ctrl.updateUser); //запит на оновлення даних про користувача
 
 router
     .route('/sibscribe')

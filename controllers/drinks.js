@@ -1,25 +1,27 @@
-const { User } = require('../db/models/user'); 
-const {Recipe} = require('../db/models/recipe');
+// const { User } = require('../db/models/user'); 
+const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
+
+
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
 
 // + отримання масиву напоїв id для поточного(залогіненого) юзера
 const getDrinksForMainPage = async (req, res) => {
   const userAge = 18;
-  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non_Alcoholic';
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
 
-  const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
+    const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
 
-  const drinksForMainPage = {};
+    const drinksForMainPage = {};
 
-  for (const category of categories) {
-    let cocktails;
+    for (const category of categories) {
+      let cocktails;
 
-    if (category === 'Other/Unknow') {
-      const alreadySelectedCocktails = Object.values(drinksForMainPage)
-        .flatMap((cocktailArray) => cocktailArray)
-        .map((cocktail) => cocktail.drink);
+      if (category === 'Other/Unknow') {
+        const alreadySelectedCocktails = Object.values(drinksForMainPage)
+          .flatMap((cocktailArray) => cocktailArray)
+          .map((cocktail) => cocktail.drink);
 
       cocktails = await Recipe.aggregate([
         { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
@@ -34,14 +36,12 @@ const getDrinksForMainPage = async (req, res) => {
         .limit(3)
         .select('-_id drink alcoholic drinkThumb');
     }
-
     drinksForMainPage[category] = cocktails;
   }
-  
   res.json(drinksForMainPage);
 };
-  
 
+ //+ отримання 
 const getPopularDrinks = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -70,52 +70,48 @@ const getPopularDrinks = async (req, res) => {
 
       res.status(200).json(similarDrinks);
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при отриманні популярних коктейлів' });
-  }
-};
+  };
 
+//+ пошук напоїв за категорією + інгредієнтам + ключовим словом 
+  const searchDrinks = async (req, res) => {
+    try {
+      const userAge = 18;
+      const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
+      
+      const { category, ingredient, keyword, page, pageSize } = req.query;
 
-const searchDrinks = async (req, res) => {
-  try {
-    const userAge = 18;
-    const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
-    
-    const { category, ingredient, keyword, page, pageSize } = req.query;
+      const currentPage = parseInt(page) || 1;
+      const limit = parseInt(pageSize) || 10;
+      const skip = (currentPage - 1) * limit;
 
-    const currentPage = parseInt(page) || 1;
-    const limit = parseInt(pageSize) || 10;
-    const skip = (currentPage - 1) * limit;
+      const query = {
+        $and: [
+          category ? { category } : {},
+          ingredient ? { 'ingredients.title': ingredient } : {},
+          keyword ? {
+            $or: [
+              { drink: { $regex: keyword, $options: 'i' } },
+              { instructions: { $regex: keyword, $options: 'i' } },
+              { 'ingredients.title': { $regex: keyword, $options: 'i' } },
+            ],
+          } : {},
+          { alcoholic: alcoholicFilter },
+        ],
+      };
 
-    const query = {
-      $and: [
-        category ? { category } : {},
-        ingredient ? { 'ingredients.title': ingredient } : {},
-        keyword ? {
-          $or: [
-            { drink: { $regex: keyword, $options: 'i' } },
-            { instructions: { $regex: keyword, $options: 'i' } },
-            { 'ingredients.title': { $regex: keyword, $options: 'i' } },
-          ],
-        } : {},
-        { alcoholic: alcoholicFilter },
-      ],
-    };
+      const totalResults = await Recipe.countDocuments(query);
 
-    const totalResults = await Recipe.countDocuments(query);
+      const drinks = await Recipe.find(query)
+        .skip(skip)
+        .limit(limit)
+        .select('-_id drink drinkThumb category ingredients.title');
 
-    const drinks = await Recipe.find(query)
-      .skip(skip)
-      .limit(limit)
-      .select('-_id drink drinkThumb category ingredients.title');
-
-    res.status(200).json({ drinks, totalResults });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
-  }
-};
+      res.status(200).json({ drinks, totalResults });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
+    }
+  };
 
 //+ отримання напою за йього _id для поточного(залогіненого) юзера
   const getDrinkById = async (req, res) => {
@@ -125,8 +121,9 @@ const searchDrinks = async (req, res) => {
     res.json(result);
   }
 
-//+додавання напою поточним(залогіненим) юзером
+//+ додавання напою поточним(залогіненим) юзером
   const addDrink = async (req, res) => {
+    console.log(req.user);
     const {_id: owner} = req.user;
         
     const result = await Recipe.create({...req.body, owner});    
@@ -138,7 +135,7 @@ const searchDrinks = async (req, res) => {
 //+ видалення напою поточним(залогіненим) юзером
   const deleteDrinkById = async (req, res) => {
     const {id} = req.params;
-    const result = await Recipe.findByIdAndDelete(id);
+    const result = await Recipe.findByIdAndDelete({id});
     if (!result) { throw httpError(404, "Not found"); }
     res.json({ message : "drink deleted" });
   } 
@@ -148,7 +145,7 @@ const searchDrinks = async (req, res) => {
     console.log("req.user=", req.user);
     const {id: owner} = req.user;
     const filter = {owner};
-    const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
+    const result = await Recipe.find(filter, "-createdAt -updatedAt");//.populate("drink");
     res.json(result);
 }
   
@@ -157,6 +154,7 @@ const searchDrinks = async (req, res) => {
     
 // }
   
+// додавання напоя в favorits для поточного(залогіненого) юзера  
 const addDrinkToFavorite = async (req, res) => {
     const { id } = req.params;
   const { _id: userId } = req.user;
@@ -166,6 +164,7 @@ const addDrinkToFavorite = async (req, res) => {
   if (!drink) {
     throw httpError(404, "Not Found");
   }
+
 
   if (!drink.users) {
     drink.users = [];
@@ -188,7 +187,7 @@ const addDrinkToFavorite = async (req, res) => {
   res.json({ result });
 }
   
-
+// видалення напоя із favorits для поточного(залогіненого) юзера
 const removeDrinkFromFavorite = async (req, res) => {
      const { id } = req.params;
   const { _id: userId } = req.user;
@@ -213,29 +212,30 @@ const removeDrinkFromFavorite = async (req, res) => {
     );
   } else {
     throw httpError(403, `${drink.drink} is not in your favorites.`);
-  }
+ }
 
   res.json({ result });
 };
 
-  
-  
-const getFavoriteDrinks = async (req, res) => {
-  
+      
+// отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
+  const getFavoriteDrinks = async(req, res)=>{
   }
+
+
 //---------------------------------------------------------------------------------------------------------
 
 module.exports = {
-  getDrinksForMainPage    :  ctrlWrapper(getDrinksForMainPage),
-  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
-  searchDrinks            :  ctrlWrapper(searchDrinks),
-  getDrinkById            :  ctrlWrapper(getDrinkById),
-  addDrink                :  ctrlWrapper(addDrink),
-  deleteDrinkById         :  ctrlWrapper(deleteDrinkById),
-  getAllDrinks            :  ctrlWrapper(getAllDrinks),
-  addDrinkToFavorite      :  ctrlWrapper(addDrinkToFavorite),
-  removeDrinkFromFavorite :  ctrlWrapper(removeDrinkFromFavorite),
-  getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
+  getDrinksForMainPage : ctrlWrapper(getDrinksForMainPage),
+  getPopularDrinks : ctrlWrapper(getPopularDrinks),
+  searchDrinks : ctrlWrapper(searchDrinks),
+  getDrinkById : ctrlWrapper(getDrinkById),
+  addDrink : ctrlWrapper(addDrink),
+  deleteDrinkById : ctrlWrapper(deleteDrinkById),
+  getAllDrinks : ctrlWrapper(getAllDrinks),
+  addDrinkToFavorite : ctrlWrapper(addDrinkToFavorite),
+  removeDrinkFromFavorite : ctrlWrapper(removeDrinkFromFavorite),
+  getFavoriteDrinks : ctrlWrapper(getFavoriteDrinks),
 }
 
 
