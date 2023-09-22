@@ -21,6 +21,10 @@ const authenticate = async (req, res, next) => {
                 next(httpError(401, "Not authorized"));
             }
             req.user = user;
+
+            const {_id, email, name} = req.user;
+            console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name});
+
             next();
         }
     catch(error)

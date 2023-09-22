@@ -9,7 +9,7 @@ const joi = require("joi");
     { 
         title: {
             type: String,
-            required: true,
+            required: [true, "Set title of ingridients"],
         },
         measure: {
             type: String,
@@ -18,8 +18,12 @@ const joi = require("joi");
         ingredientId : {
             type: Schema.Types.ObjectId,
             ref: 'Ingridient',
-            required: true,
+            required: [true, "Set id of ingridients"],
         },
+    },
+    {  
+        versionKey: false,
+        timestamps: true,
     }
   );
 
@@ -480,6 +484,10 @@ const addSchema = joi.object({
         });
         return errors;
     }),
+
+});
+
+const ingAddSchema = joi.object({
 
 });
 

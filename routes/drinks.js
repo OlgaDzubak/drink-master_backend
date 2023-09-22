@@ -7,11 +7,11 @@ const router = express.Router();
 
 router
     .route('/mainpage')
-    .get(authenticate, ctrl.getDrinksForMainPage)
+    .get(authenticate, ctrl.getDrinksForMainPage);
 
 router
     .route('/popular')
-    .get(authenticate, ctrl.getPopularDrinks)
+    .get(authenticate, ctrl.getPopularDrinks);
 
 router
     .route('/search')
@@ -20,7 +20,7 @@ router
 router
     .route('/:id')
     .get(authenticate, validateId, ctrl.getDrinkById)
-    .delete(authenticate, validateId, ctrl.deleteDrinkById);   
+    .delete(authenticate, validateId, ctrl.deleteDrinkById);
 
 router
     .route('/own')
@@ -28,7 +28,7 @@ router
 
 router
     .route('/own/add')
-    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink);    
+    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink);
 
 
     
