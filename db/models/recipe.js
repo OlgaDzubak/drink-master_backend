@@ -13,7 +13,6 @@ const joi = require("joi");
         },
         measure: {
             type: String,
-            required: true,
             maxlenght: 30,
         },
         ingredientId : {
@@ -463,6 +462,25 @@ const addSchema = joi.object({
     });
     return errors;
     }),
+    shortDescription : joi.string().min(10).max(200).error(errors => {
+        errors.forEach(err => {
+            switch (err.code) {
+                    case "string.empty":
+                                    err.message = "description field should not be empty!";
+                                    break;
+                    case "string.min":
+                                    err.message = `description field should have at least ${err.local.limit} characters!`;
+                                    break;
+                    case "string.max":
+                                    err.message = `description field should have ${err.local.limit} characters maximum!`;
+                                    break;
+                    default:
+                                    break;
+                }
+        });
+        return errors;
+    }),
+
 });
 
 

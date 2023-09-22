@@ -15,35 +15,35 @@ router
 
 router
     .route('/search')
-    .get(authenticate, ctrl.searchDrinks);//????? мабудь треба вставити всередину мідлвару для валідації даних пошуку
+    .get(authenticate, ctrl.searchDrinks);
 
 router
     .route('/:id')
-    .get(authenticate, validateId, ctrl.getDrinkById)   
+    .get(authenticate, validateId, ctrl.getDrinkById);
 
 router
     .route('/own/add')
-    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink)    
+    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink);    
 
 router
     .route('/:id')
-    .delete(authenticate, validateId, ctrl.deleteDrinkById)    
+    .delete(authenticate, validateId, ctrl.deleteDrinkById);   
 
 router
     .route('/own')
-    .get(authenticate, ctrl.getAllDrinks)   
+    .get(authenticate, ctrl.getAllDrinks);
 
-router
-    .route('/favorite/add')
-    .post(authenticate, validateId, ctrl.addDrinkToFavorite) 
+// router
+//     .route('/favorite/add')
+//     .post(authenticate, validateId, ctrl.addDrinkToFavorite) 
 
-router
-    .route('/favorite/remove')
-    .delete(authenticate, validateId, ctrl.removeDrinkFromFavorite)    
+// router
+//     .route('/favorite/remove')
+//     .delete(authenticate, validateId, ctrl.removeDrinkFromFavorite)    
 
-router
-    .route('/favorite')
-    .get(authenticate, ctrl.getPopularDrinks)
+// router
+//     .route('/favorite')
+//     .get(authenticate, ctrl.getFavoriteDrinks)
 
 
 
