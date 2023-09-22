@@ -43,7 +43,6 @@ const getDrinksForMainPage = async (req, res) => {
 
  //+ отримання 
 const getPopularDrinks = async (req, res) => {
-  try {
     const userId = req.user._id;
 
     const user = await User.findById(userId);
@@ -70,7 +69,7 @@ const getPopularDrinks = async (req, res) => {
 
       res.status(200).json(similarDrinks);
     }
-  };
+}
 
 //+ пошук напоїв за категорією + інгредієнтам + ключовим словом 
   const searchDrinks = async (req, res) => {
