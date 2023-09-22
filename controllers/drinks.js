@@ -130,7 +130,8 @@ const { httpError, ctrlWrapper} = require('../helpers/');
 
 //+ додавання напою поточним(залогіненим) юзером
   const addDrink = async (req, res) => {
-    const {id: owner} = req.user;
+    console.log(req.user);
+    const {_id: owner} = req.user;
         
     const result = await Recipe.create({...req.body, owner});    
 
@@ -148,9 +149,10 @@ const { httpError, ctrlWrapper} = require('../helpers/');
 
 // отримання всіх напоїв поточного(залогіненого) юзера
   const getAllDrinks = async(req, res)=>{ 
+    console.log("req.user=", req.user);
     const {_id: owner} = req.user;
     const filter = {owner};
-    const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
+    const result = await Recipe.find(filter, "-createdAt -updatedAt");
     res.json(result);
   }
 

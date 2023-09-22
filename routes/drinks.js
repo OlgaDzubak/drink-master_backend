@@ -19,19 +19,21 @@ router
 
 router
     .route('/:id')
-    .get(authenticate, validateId, ctrl.getDrinkById);
-
-router
-    .route('/own/add')
-    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink);    
-
-router
-    .route('/:id')
+    .get(authenticate, validateId, ctrl.getDrinkById)
     .delete(authenticate, validateId, ctrl.deleteDrinkById);   
 
 router
     .route('/own')
     .get(authenticate, ctrl.getAllDrinks);
+
+router
+    .route('/own/add')
+    .post(authenticate, validateBody(schemas.addSchema), ctrl.addDrink);    
+
+
+    
+
+
 
 // router
 //     .route('/favorite/add')
