@@ -4,6 +4,8 @@ const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
 
+const swaggerUi = require('swagger-ui-express'); // Swagger-doc - документація
+const swaggerDocument = require('./swagger.json'); // Swagger-doc - документація
 
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
@@ -21,6 +23,7 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); // Swagger-doc - документація
 
 app.use('/auth', authRouter);             // корневий маршрут для регістрації, авторизації, розавторизації
 app.use('/users', usersRouter);           // корневий маршрут для роботи з залогіненим юзером
