@@ -1,0 +1,265 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "5.0.0",
+        "title": "Swagger test",
+        "description": "API documentation for project Drink. Кокте́йль (англ. cocktail) — напиток, получаемый смешиванием нескольких компонентов. Чаще всего коктейли представляют собой либо комбинацию спиртных напитков, либо бесполезную детскую смесь. Коктейли сильно различаются в разных регионах мира, поэтому наш проект призван для публикации как оригинальных рецептов, так и своих собственных интерпретаций старых и более известных коктейлей.",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "servers": [{ "url": "https://drink-master-server.onrender.com" }],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authorization endpoints"
+        }
+    ],
+    "paths": {
+        "/auth/signup": {
+            "post": {
+            "tags": ["Auth"],
+            "summary": "Sign up new user - User registration",
+            "parameters": [],
+            "security": [{ "Bearer": [] }],
+            "requestBody": {
+                "description": "# Description of the request parameters:\n**name** - string, user name.\n**email** - string, user email.\n**password** - string, encrypted user password. \n**birthdate** - date, user's date of birth",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                        "$ref": "#/components/schemas/RegistrationRequest"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "201": {
+                    "description": "Successful operation",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationResponse"
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Bad request (invalid request body)",
+                    "content": {}
+                },
+                "409": {
+                    "description": "Email in use",
+                    "content": {}
+                }
+            }
+            }
+        },
+        "/auth/signin": {
+            "post": {
+            "tags": ["Auth"],
+            "summary": "Sign in existing user",
+            "parameters": [],
+            "security": [{ "Bearer": [] }],
+            "requestBody": {
+                "description": "# Description of the request parameters:\n**email** - string, user email.\n **password** - string, encrypted user password.",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                        "$ref": "#/components/schemas/SignInDto"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "201": {
+                    "description": "Created session for existing user",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserWithTokenSerializer"
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Bad request (invalid request body)",
+                    "content": {}
+                },
+                "403": {
+                    "description": "Forbidden",
+                    "content": {}
+                },
+                "404": {
+                    "description": "Not found",
+                    "content": {}
+                }
+            }
+            }
+        },
+        "/auth/signout": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "Signs out user",
+                "parameters": [],
+                "description": "**Ендпоінт логауту** - це механізм виходу з системи, який припиняє дію сесії користувача та знищує токен доступу, що був виданий при попередній аутентифікації.\n**Опис:** Коли користувач натискає кнопку вийти з системи, він робить запит на URL/auth/signout з валідним токеном у заголовку Authorization. Сервер перевіряє валідність токена, якщо токен є дійсним, то сесія користувача закривається, токен видаляється і користувач повертається на сторінку входу в систему. Якщо токен не є валідним, то сервер повертає статус 401 і повідомляє про невалідність токена.",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                "204": {
+                    "description": "User signed out"
+                },
+                "401": {
+                    "description": "Bearer auth failed",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Description of the error."
+                                    }
+                                }
+                            },
+                            "example": {
+                                "message": "Not authorized."
+                            }
+                        }
+                    }
+                }
+            }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RegistrationRequest": {
+                "type": "object",
+                "required": ["name", "email", "password", "birthdate"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "User's name",
+                        "example": "Oleksandr"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password",
+                        "example": "qwerty123"
+                    },
+                    "birthdate": {
+                        "type": "date",
+                        "description": "User's birthdate",
+                        "example": "01.01.2000"
+                    }
+                }
+            },
+            "SignInDto": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password",
+                        "example": "qwerty123"
+                    }
+                }
+            },
+            "RegistrationResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "_id": {
+                            "type": "objectId",
+                            "description": "User id",
+                            "example": "skfhku4424otjrelgd"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Username",
+                            "example": "Oleksandr"
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "User's email",
+                            "format": "email"
+                        },
+                        "token": {
+                            "type": "string",
+                            "description": "User's token",
+                            "example": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j"
+                        }
+                    }
+                },
+                "example": {
+                    "user": { 
+                        "_id": "skfhku4424otjrelgd",
+                        "name": "Oleksandr", 
+                        "email": "1@gmail.com", 
+                        "token": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j", 
+                        "avatarURL": "http://gravatar/sdfsdf" 
+                    }
+                }
+            },
+            "UserWithTokenSerializer": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "_id": {
+                            "type": "objectId",
+                            "description": "User id",
+                            "example": "skfhku4424otjrelgd"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Username",
+                            "example": "Oleksandr"
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "User's email",
+                            "format": "email"
+                        },
+                        "token": {
+                            "type": "string",
+                            "description": "User's token",
+                            "example": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j"
+                        }
+                    }
+                },
+                "example": {
+                    "user": { 
+                        "_id": "skfhku4424otjrelgd",
+                        "name": "Oleksandr", 
+                        "email": "1@gmail.com", 
+                        "token": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j", 
+                        "avatarURL": "http://gravatar/sdfsdf" 
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
