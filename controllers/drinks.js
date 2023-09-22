@@ -4,11 +4,10 @@ const { httpError, ctrlWrapper} = require('../helpers/');
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
 
-//+ отримання масиву напоїв id для поточного(залогіненого) юзера
+// + отримання масиву напоїв id для поточного(залогіненого) юзера
 const getDrinksForMainPage = async (req, res) => {
-
   const userAge = 18;
-  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non аlcoholic';
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non_Alcoholic';
 
   const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
 
@@ -22,14 +21,12 @@ const getDrinksForMainPage = async (req, res) => {
         .flatMap((cocktailArray) => cocktailArray)
         .map((cocktail) => cocktail.drink);
 
-      
       cocktails = await Recipe.aggregate([
         { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
         { $sample: { size: 3 } },
-        { $project: { _id: 0, drink: 1, drinkThumb: 1 } } 
+        { $project: { _id: 0, drink: 1, drinkThumb: 1 } }
       ]);
     } else {
-      
       cocktails = await Recipe.find({
         category,
         alcoholic: alcoholicFilter,
@@ -37,10 +34,12 @@ const getDrinksForMainPage = async (req, res) => {
         .limit(3)
         .select('-_id drink alcoholic drinkThumb');
     }
+
+    drinksForMainPage[category] = cocktails;
   }
-  drinksForMainPage[category] = cocktails;
+  
   res.json(drinksForMainPage);
-}; 
+};
   
 
 const getPopularDrinks = async (req, res) => {
@@ -151,16 +150,78 @@ const searchDrinks = async (req, res) => {
     const filter = {owner};
     const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
     res.json(result);
-  }
-
-  const addDrinkToFavorite = async (req, res) => {
-    
-  }
-
-  const removeDrinkFromFavorite = async(req, res)=>{
-  }
+}
   
-  const getFavoriteDrinks = async(req, res)=>{
+   
+//   const addDrinkToFavorite = async (req, res) => {
+    
+// }
+  
+const addDrinkToFavorite = async (req, res) => {
+    const { id } = req.params;
+  const { _id: userId } = req.user;
+
+  const drink = await Recipe.findById(id);
+
+  if (!drink) {
+    throw httpError(404, "Not Found");
+  }
+
+  if (!drink.users) {
+    drink.users = [];
+  }
+
+  const isFavorite = drink.users.includes(userId);
+
+  let result;
+
+  if (isFavorite) {
+    throw httpError(409, `${drink.drink} is already in your favorites.`);
+  } else {
+    result = await Recipe.findByIdAndUpdate(
+      drink._id,
+      { $push: { users: userId } },
+      { new: true }
+    );
+  }
+
+  res.json({ result });
+}
+  
+
+const removeDrinkFromFavorite = async (req, res) => {
+     const { id } = req.params;
+  const { _id: userId } = req.user;
+
+  const drink = await Drink.findById(id);
+
+  if (!drink) {
+    throw HttpError(404, "Not Found");
+  }
+
+   const isFavorite = drink.users ? drink.users.includes(userId) : true;
+
+  let result;
+
+  if (isFavorite) {
+    result = await Drink.findByIdAndUpdate(
+      drink._id,
+      {
+        $pull: { users: userId },
+      },
+      { new: true }
+    );
+  } else {
+    throw HttpError(403, `${drink.drink} is not in your favorites.`);
+  }
+
+  res.json({ result });
+};
+
+  
+  
+const getFavoriteDrinks = async (req, res) => {
+  
   }
 //---------------------------------------------------------------------------------------------------------
 
@@ -176,3 +237,5 @@ module.exports = {
   removeDrinkFromFavorite :  ctrlWrapper(removeDrinkFromFavorite),
   getPopularDrinks        :  ctrlWrapper(getPopularDrinks),
 }
+
+
