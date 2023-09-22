@@ -259,7 +259,7 @@ const addSchema = joi.object({
         errors.forEach(err => {
             switch (err.code) {
                     case "any.required": 
-                                    err.message = "missing required description field";
+                                    err.message = "missing required instructions field";
                                     break;
                     case "string.empty":
                                     err.message = "description field should not be empty!";
