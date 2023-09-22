@@ -146,11 +146,11 @@ const { httpError, ctrlWrapper} = require('../helpers/');
     res.json({ message : "drink deleted" });
   } 
 
-//+ отримання всіх напоїв поточного(залогіненого) юзера
-  const getAllDrinks = async (req, res)=>{
-    const {id} = req.user;
-    const filter = {owner: id};
-    const result = await Recipe.find(filter);
+// отримання всіх напоїв поточного(залогіненого) юзера
+  const getAllDrinks = async(req, res)=>{ 
+    const {_id: owner} = req.user;
+    const filter = {owner};
+    const result = await Recipe.find(filter, "-createdAt -updatedAt").populate("drink");
     res.json(result);
   }
 
