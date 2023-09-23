@@ -121,28 +121,39 @@ const { mongoose } = require("mongoose");
   }
 
 //+ додавання напою поточним(залогіненим) юзером
-  const addDrink = async (req, res) => {
-    const {_id: owner} = req.user;
-    const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
+  // const addDrink = async (req, res) => {
+  //   const {_id: owner} = req.user;
+  //   const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
   //  const {drinkImage} = req.file;      //!!!! drinkImage - домовитися в фронтендом, як однаково назвати
-    const drinkThumb = req.file.path;
+  //   // const drinkThumb = req.file.path;
 
 
-    // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
-    const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
-        const _id = new mongoose.Types.ObjectId(ingredientId);
-        return {title, measure, ingredientId: _id }; 
-      });
+  //   // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+  //   const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
+  //       const _id = new mongoose.Types.ObjectId(ingredientId);
+  //       return {title, measure, ingredientId: _id }; 
+  //     });
 
-      const result = await Recipe.create({
-            ...req.body,
-            ingredients : ingredientsJSON, 
-            drinkThumb, 
-            owner
-          }
-        );    
+  //     const result = await Recipe.create({
+  //           ...req.body,
+  //           ingredients : ingredientsJSON, 
+  //       // drinkThumb, 
+  //           drinkImage,
+  //           owner
+  //         }
+  //       );    
 
-    //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+  //   if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+  //   res.status(201).json(result);
+  // } 
+  
+  const addDrink = async (req, res) => {
+    console.log(req.user);
+    const {_id: owner} = req.user;
+        
+    const result = await Recipe.create({...req.body, owner});    
+
+    if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
     res.status(201).json(result);
   } 
 
