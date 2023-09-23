@@ -97,12 +97,12 @@ const { mongoose } = require("mongoose");
         const query = {
           $and: [
             category ? { category } : {},
-            ingredient ? { 'ingredients.title': { $regex: ingredient.replace(' ', '[^\S]'), $options: 'i' } } : {} ,
+            ingredient ? { 'ingredients.title': { ingredient, $options: 'i' } } : {} ,
             keyword ? {
               $or: [
                 { drink: { $regex: keyword, $options: 'i' } },
                 { instructions: { $regex: keyword, $options: 'i' } },
-                { 'ingredients.title': { $regex: keyword, $options: 'i' } },
+                { 'ingredients.title': { $regex: keyword, $options: 'i' } },   //.replace(' ', '[^\S]')
               ],
             } : {},
             { alcoholic: alcoholicFilter },
@@ -114,7 +114,7 @@ const { mongoose } = require("mongoose");
         const drinks = await Recipe.find(query)
           .skip(skip)
           .limit(limit)
-          .select('-_id drink drinkThumb category instructions ingredients.title');
+          .select('-_id drink drinkThumb category instructions description shortDescription ingredients.title');
 
         res.status(200).json({ drinks, totalResults });
       } catch (error) {
@@ -127,7 +127,7 @@ const { mongoose } = require("mongoose");
     const getFavoriteDrinks = async(req, res)=>{
       const { _id: userId } = req.user;
 
-      const result = await Recipe.find({ users: { $in : [ userId ] } }, {drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
+      const result = await Recipe.find({ users: { $in : [ userId ] } }, {drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
 
       if (!result){ throw httpError(404, "Not found"); }
 
@@ -137,7 +137,7 @@ const { mongoose } = require("mongoose");
   //+ отримання напою за йього _id для поточного(залогіненого) юзера
     const getDrinkById = async (req, res) => {
       const {id} = req.params;
-      const result = await Recipe.findById(id, {drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
+      const result = await Recipe.findById(id, {drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
       if (!result) { throw httpError(404, "Not found"); }
       res.json(result);
     }
@@ -196,7 +196,7 @@ const { mongoose } = require("mongoose");
           drink._id, 
           { $push: { users: userId } },
           { new: true },
-        );
+        ).select({drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
       }
 
       res.status(201).json(result);
