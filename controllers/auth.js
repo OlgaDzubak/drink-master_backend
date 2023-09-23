@@ -14,16 +14,14 @@ const {SECRET_KEY, BASE_URL} = process.env;
 // + реєстрація нового користувача
   const signup = async (req, res) => {
 
-    const {name, email, password} = req.body;
-    const user = await User.findOne({email});
+    const {email, password} = req.body;
+    const user = await User.findOne({email});                                                      // первіряємо в базі чи немає вже такого email, двох однакових бути не може
     if (user) {
       throw httpError(409, "Email in use");
     }
-    const hashPassword = await bcrypt.hash(password, 10);
-    
-    const avatarURL = gravatar.url(email); // отримали url тимчасової аватарки
-    const verificationToken = v4();
-    const newUser = await User.create({...req.body, password: hashPassword, avatarURL, verificationToken,});
+    const hashPassword = await bcrypt.hash(password, 10);                                           // хушуємо пароль
+    const verificationToken = v4();                                                                 // створюэмо токен для верифікації emai
+    const newUser = await User.create({...req.body, password: hashPassword, verificationToken,});   // створюємо нового юзера
 
    // відправляємо на email юзера лист для верифікації пошти 
     const verifyEmail = {

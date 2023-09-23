@@ -205,6 +205,7 @@ const updateSchema = joi.object({
         });
         return errors;
     }),
+
 })
 
 const emailSchema = joi.object({

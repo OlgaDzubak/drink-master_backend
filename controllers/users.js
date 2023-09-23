@@ -20,12 +20,15 @@ const {SECRET_KEY, BASE_URL} = process.env;
 // !!!оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
   const updateUser  = async(req, res) => {
+    let newAvatarURL;
     
     const {name} = req.body;                                               // забираємо нове ім'я поточного юзера з http-запиту
-    const {_id} = req.user;                                                // забираємо id поточного юзера
-    const avatarURL = req.file.path;
-            
-    await User.findByIdAndUpdate(_id, {avatarURL, name}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
+    const {_id, avatarURL} = req.user;                                     // забираємо id поточного юзера
+    
+    if (req.file) { newAvatarURL = req.file.path; }
+    else { newAvatarURL =avatarURL; }
+    
+    await User.findByIdAndUpdate(_id, {avatarURL:newAvatarURL , name}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
         
     res.json({ avatarURL, name});
   }
