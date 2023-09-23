@@ -11,7 +11,6 @@ router.get('/search', authenticate, ctrl.searchDrinks);
 router.get('/favorite', authenticate, ctrl.getFavoriteDrinks);
 router.get('/:id', authenticate, validateId, ctrl.getDrinkById);                    //+
 
-
 router.post('/own/add', authenticate, upload.single("drinkImage"), ctrl.addDrink);  //+
 router.post('/favorite/add/:id', authenticate, validateId,ctrl.addDrinkToFavorite); //+
 
