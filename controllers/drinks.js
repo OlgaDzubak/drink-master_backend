@@ -196,7 +196,7 @@ const { mongoose } = require("mongoose");
           drink._id, 
           { $push: { users: userId } },
           { new: true },
-        ).select({drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
+        ).select({drink, category, alcoholic, glass, description, shortDescription, instructions, drinkThumb, ingredients});
       }
 
       res.status(201).json(result);
