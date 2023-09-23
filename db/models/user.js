@@ -41,7 +41,8 @@ const userSchema = new Schema(
         //дані з UserInfoModal (профайл юзера)
         avatarURL:{
             type: String,
-            required: [true, 'Avatar url is required']
+            required: [true, 'Avatar url is required'],
+            default: 'https://res.cloudinary.com/dxvnh0oip/image/upload/v1695434633/avatars/User_vzgcyg.png',
         }, 
 
         //дані для авторизації та верифікації

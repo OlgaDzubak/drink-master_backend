@@ -116,7 +116,8 @@ const joi = require("joi");
         },
         drinkThumb:{
             type: String,
-            //required: [true, 'Set image URL for recipe'],
+            required: [true, 'Set image URL for recipe'],
+            default: "https://res.cloudinary.com/dxvnh0oip/image/upload/v1695433998/drinks/Glass_for_drink_bxguke.png",
         },
         ingredients:{
             type : Array,    //[ingSchema],  // перевірити
@@ -133,7 +134,12 @@ const joi = require("joi");
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true,
-          }
+          },
+        users: {
+            type: Array,
+            ref: 'User',
+            default: [],
+        }
     },
     {  
         versionKey: false,

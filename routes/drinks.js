@@ -4,44 +4,18 @@ const {validateBody, validateId, validateFavorite, validateQuery, validateFormDa
 const {schemas} = require("../db/models/recipe");
 const router = express.Router();
 
-router   //+
-    .route('/own')
-    .get(authenticate, ctrl.getAllDrinks);
+router.get('/mainpage', authenticate, ctrl.getDrinksForMainPage);                   //+
+router.get('/own', authenticate, ctrl.getAllDrinks);                                //+
+router.get('/:id', authenticate, validateId, ctrl.getDrinkById);                    //+
+router.get('/popular', authenticate, ctrl.getPopularDrinks);
+router.get('/search', authenticate, ctrl.searchDrinks);
+router.get('/favorite', authenticate, ctrl.getFavoriteDrinks);
 
-router   //+
-    .route('/own/add')
-    .post(authenticate, upload.single("drinkImage"), ctrl.addDrink); 
+router.post('/own/add', authenticate, upload.single("drinkImage"), ctrl.addDrink);  //+
+router.post('/favorite/add/:id', authenticate, validateId,ctrl.addDrinkToFavorite);
 
-router   
-    .route('/mainpage')
-    .get(authenticate, ctrl.getDrinksForMainPage);
-
-router
-    .route('/popular')
-    .get(authenticate, ctrl.getPopularDrinks);
-
-router
-    .route('/search')
-    .get(authenticate, ctrl.searchDrinks);
-    
-router  //+
-    .route('/:id')
-    .get(authenticate, validateId, ctrl.getDrinkById)
-    .delete(authenticate, validateId, ctrl.deleteDrinkById);
-
-
-router
-    .route('/favorite/add')
-    .post(authenticate, validateId, ctrl.addDrinkToFavorite) 
-
-router
-    .route('/favorite/remove')
-    .delete(authenticate, validateId, ctrl.removeDrinkFromFavorite)    
-
-router
-    .route('/favorite')
-    .get(authenticate, ctrl.getFavoriteDrinks)
-
+router.delete('/:id', authenticate, validateId, ctrl.deleteDrinkById);   
+router.delete('/favorite/remove/:id', authenticate, validateId, ctrl.removeDrinkFromFavorite);
 
 
 
