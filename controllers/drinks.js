@@ -97,7 +97,7 @@ const { mongoose } = require("mongoose");
         const query = {
           $and: [
             category ? { category } : {},
-            ingredient ? { 'ingredients.title': ingredient } : {},
+            ingredient ? { 'ingredients.title': { $regex: ingredient.replace(' ', '[^\S]'), $options: 'i' } } : {} ,
             keyword ? {
               $or: [
                 { drink: { $regex: keyword, $options: 'i' } },
@@ -114,7 +114,7 @@ const { mongoose } = require("mongoose");
         const drinks = await Recipe.find(query)
           .skip(skip)
           .limit(limit)
-          .select('-_id drink drinkThumb category ingredients.title');
+          .select('-_id drink drinkThumb category instructions ingredients.title');
 
         res.status(200).json({ drinks, totalResults });
       } catch (error) {

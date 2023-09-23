@@ -10,14 +10,14 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
 
-// + поверення поточного користувача
+//+ поверення поточного користувача
   const getCurrent = async(req, res) => {
     const { name, email, id} = req.user;
     res.status(200).json({ name, email, id});
   }
 
 
-// !!!оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
+//+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
   const updateUser  = async(req, res) => {
     let newAvatarURL;
@@ -34,25 +34,28 @@ const {SECRET_KEY, BASE_URL} = process.env;
   }
 
 
-// надсилання листа з повідомленням про підписку на розсилку
+//+ надсилання листа з повідомленням про підписку на розсилку
   const subscribe = async(req, res) => {
       const {email, name} = req.user;
        
-      // відправляємо на email юзера лист для верифікації пошти 
+      // створюємо поштове повідомлення
        const EmailAboutSubscription = {
         to: email,
         subject: `Subscription message from ${BASE_URL}`,
-        html: `
-                <p> Hello, ${name}!
-                    You are subscribed to our newsletters. 
-                    You will recieve a message about our news and special offers, etc.
-                    Thank you!
-                </p>
-                <a target="_blank" href="${BASE_URL}/auth/verify/${verificationToken}">Click verify email</a>
-              `
+        html: ` <h1 style="font-size: 20px"> Hello, ${name}!</h1>
+                <p  style="font-size: 16px"> You are subscribed to our newsletters. </p>
+                <p  style="font-size: 16px"> You will be recieve a letters about our news and special offers, etc. </p>
+                <p  style="font-size: 16px"> Thank you! </p>
+
+                <p  style="font-size: 14px"> Visit out site! 
+                  <a target="_blank" href="${BASE_URL}" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
+                </p>`
       };
-  
+      
+      // відправляємо на email юзера лист з повіломленням про підписку
       await sendEmail(EmailAboutSubscription);
+
+      res.json( { message: `Subscribtion successful. Letters about subscribtion was sent to your email ${email}` } );
 
   }
 
