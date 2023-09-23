@@ -36,7 +36,23 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 // надсилання листа з повідомленням про підписку на розсилку
   const subscribe = async(req, res) => {
-
+      const {email, name} = req.user;
+       
+      // відправляємо на email юзера лист для верифікації пошти 
+       const EmailAboutSubscription = {
+        to: email,
+        subject: `Subscription message from ${BASE_URL}`,
+        html: `
+                <p> Hello, ${name}!
+                    You are subscribed to our newsletters. 
+                    You will recieve a message about our news and special offers, etc.
+                    Thank you!
+                </p>
+                <a target="_blank" href="${BASE_URL}/auth/verify/${verificationToken}">Click verify email</a>
+              `
+      };
+  
+      await sendEmail(EmailAboutSubscription);
 
   }
 

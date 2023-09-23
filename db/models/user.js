@@ -50,14 +50,14 @@ const userSchema = new Schema(
             type : String,
             default: ""
         },
-        verify: {
-            type: Boolean,
-            default: false,
-        },
-        verificationToken: {
-            type: String,
-            required: [true, 'Verify token is required'],
-        },
+        // verify: {
+        //     type: Boolean,
+        //     default: false,
+        // },
+        // verificationToken: {
+        //     type: String,
+        //     required: [true, 'Verify token is required'],
+        // },
 
     },
     {  

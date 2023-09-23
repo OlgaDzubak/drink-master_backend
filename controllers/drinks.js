@@ -142,7 +142,6 @@ const { mongoose } = require("mongoose");
       res.json(result);
     }
 
-
 // контроллери для POST-запитів
 
   //+ додавання напою поточним(залогіненим) юзером

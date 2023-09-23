@@ -19,24 +19,34 @@ const {SECRET_KEY, BASE_URL} = process.env;
     if (user) {
       throw httpError(409, "Email in use");
     }
-    const hashPassword = await bcrypt.hash(password, 10);                                           // хушуємо пароль
-    const verificationToken = v4();                                                                 // створюэмо токен для верифікації emai
-    const newUser = await User.create({...req.body, password: hashPassword, verificationToken,});   // створюємо нового юзера
+    const hashPassword = await bcrypt.hash(password, 10);                                          // хешуємо пароль
+        
 
-   // відправляємо на email юзера лист для верифікації пошти 
-    const verifyEmail = {
-      to: email,
-      subject: "Verify email",
-      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${verificationToken}">Click verify email</a>`
-    };
+    const newUser = await User.create({...req.body, password: hashPassword});                     // створюємо нового юзера без верифікації email
+    const payload = { id: newUser._id };                                                                
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });                            // створюємо токен для того щоб одразу залогінитися 
+    await User.findByIdAndUpdate(newUser._id, { token });                                         // записуємо токен в базу користувачів
 
-    await sendEmail(verifyEmail);
+    // ----------------------------------------------------------
+    // блок з верифікацією email після реєстрації закоментила, що  залогінитися автоматом одазу після реєстрації
+    // const verificationToken = v4();                                                                 // створюэмо токен для верифікації emai
+    // const newUser = await User.create({...req.body, password: hashPassword, verificationToken,});   // створюємо нового юзера
 
-    res.status(201).json({
+    // відправляємо на email юзера лист для верифікації пошти 
+    // const verifyEmail = {
+    //   to: email,
+    //   subject: "Verify email",
+    //   html: `<a target="_blank" href="${BASE_URL}/auth/verify/${verificationToken}">Click verify email</a>`
+    // };
+    // await sendEmail(verifyEmail);
+    // ----------------------------------------------------------
+
+    res.status(201).json( {
+      token,
       "user": {
-        name : newUser.name,
-        email : newUser.email,
-        avatarURL: newUser.avatarURL,
+        "name": newUser.name,
+        "email": newUser.email,
+        "avatarURL": newUser.avatarURL,
       }
     });
     
@@ -87,7 +97,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const comparePassword = await bcrypt.compare(password, user.password);   // перевіряємо пароль
     if (!comparePassword){ throw httpError(401, "Password is wrong"); }
 
-    if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
+    //if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
 
     //створюємо токен
     const payload = { id: user._id }; 
