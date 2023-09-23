@@ -4,17 +4,12 @@ const {authenticate}  = require("../middlewares");
 
 const router = express.Router();
 
+//-----------------------------------------------------------------------------------------------------------
 
-router
-    .route('/categories')
-    .get(authenticate, ctrl.getCategories)
+router.get('/categories', authenticate, ctrl.getCategories)         // + отримання списку всіх категорій
+router.get('/ingridients', authenticate, ctrl.getIngridients)       // + отримання списку всіх інгрідієнтів
+router.get('/glasses', authenticate, ctrl.getGlasses);              // + отримання списку всіх типів емностей
 
-router
-    .route('/ingridients')
-    .get(authenticate, ctrl.getIngridients)
-
-router
-    .route('/glasses')
-    .get(authenticate, ctrl.getGlasses);
+//------------------------------------------------------------------------------------------------------------
 
 module.exports = router;

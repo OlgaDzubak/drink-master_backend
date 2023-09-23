@@ -3,7 +3,7 @@ const {Ingridient} = require('../db/models/ingridient');
 const { ctrlWrapper } = require('../helpers/');
 
 
-//------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /filters) ----------------------------
+//------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ТА INFEIDIENRS ( для маршрута /filters) --------------
 
   //+ отримання списку категорій із колекції recipes
   const getCategories = async (req, res) => {
@@ -11,7 +11,7 @@ const { ctrlWrapper } = require('../helpers/');
     res.json(result);
   }
 
-  //+отримання списку інгрідієнтів із колекції шngridients
+  //+отримання списку інгрідієнтів із колекції ingridients
   const getIngridients = async (req, res) => {
     const result = await Ingridient.distinct("title");
     res.json(result);
