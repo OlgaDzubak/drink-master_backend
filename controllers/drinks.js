@@ -228,12 +228,13 @@ const { mongoose } = require("mongoose");
       
 // отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
   const getFavoriteDrinks = async(req, res)=>{
-    // const { _id: userId } = req.user;
+     const { _id: userId } = req.user;
 
-    // const result = await Recipe.find({users: userId});
+    const result = await Recipe.find({ users: { $in : [ userId ] } }, {drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
 
-    // res.json(result);
+    if (!result){ throw httpError(404, "Not found"); }
 
+    res.json(result);
   }
 
 
