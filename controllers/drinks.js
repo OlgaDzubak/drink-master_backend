@@ -1,4 +1,4 @@
-// const { User } = require('../db/models/user'); 
+const { User } = require('../db/models/user'); 
 const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
 const { mongoose } = require("mongoose");
