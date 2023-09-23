@@ -1,4 +1,4 @@
-// const { User } = require('../db/models/user'); 
+const { User } = require('../db/models/user'); 
 const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
 const { mongoose } = require("mongoose");
@@ -228,7 +228,11 @@ const { mongoose } = require("mongoose");
       
 // отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
   const getFavoriteDrinks = async(req, res)=>{
+    // const { _id: userId } = req.user;
 
+    // const result = await Recipe.find({users: userId});
+
+    // res.json(result);
 
   }
 
