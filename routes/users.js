@@ -1,25 +1,20 @@
 const express = require('express');
-const ctrl = require('../controllers/users');
+const ctrl = require('../controllers/auth');
 const {validateBody, authenticate, upload}  = require("../middlewares");
 const {schemas} = require("../db/models/user");
 
 const router = express.Router();
 
 
-// МАРШРУТИ ДЛЯ ЗАЛОГІНЕНОГО ЮЗЕРА
+// SIGN UP
+router.get('/verify/:verificationToken', ctrl.verifyEmail);                         // запит на верифікацію єлектронної пошти юзера   
+router.post('/signup', validateBody(schemas.signUpSchema), ctrl.signup);            //запит на реєстрацію нового користувача
+router.post('/verify', validateBody(schemas.emailSchema), ctrl.resendVerifyEmail);  // запит на повторну верифікацію єлектронної пошти юзера
 
-router
-    .route('/current')
-    .get(authenticate, ctrl.getCurrent);                             //запит на отримання інформації про поточного користувача
-
-router
-    .route('/update')
-    .patch(authenticate, upload.single("avatar"), ctrl.updateUser); //запит на оновлення даних про користувача
-
-router
-    .route('/sibscribe')
-    .post(authenticate, ctrl.subscribe);   //запит на надсилання листа з повідомленням про підписку на розсилку
+// SIGN IN
+router.post('/signin', validateBody(schemas.signInSchema), ctrl.signin);            //запит на авторизацію існуючого користувача
+router.post('/signout',authenticate, ctrl.signout);                                 //запит на розавторизацію існуючого користувача
 
 
-
+    
 module.exports = router;
