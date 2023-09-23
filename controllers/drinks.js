@@ -251,5 +251,3 @@ module.exports = {
   removeDrinkFromFavorite : ctrlWrapper(removeDrinkFromFavorite),
   getFavoriteDrinks : ctrlWrapper(getFavoriteDrinks),
 }
-
-
