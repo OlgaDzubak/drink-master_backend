@@ -11,7 +11,7 @@ module.exports = {
     validateBody, 
     validateId, 
     validateFavorite, 
-    validateQuery, 
+    validateQuery,
     authenticate, 
     upload,
 };

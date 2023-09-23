@@ -1,7 +1,7 @@
 // const { User } = require('../db/models/user'); 
 const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
-
+const { mongoose } = require("mongoose");
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
@@ -122,12 +122,27 @@ const getPopularDrinks = async (req, res) => {
 
 //+ додавання напою поточним(залогіненим) юзером
   const addDrink = async (req, res) => {
-    console.log(req.user);
     const {_id: owner} = req.user;
-        
-    const result = await Recipe.create({...req.body, owner});    
+    const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
+  //  const {drinkImage} = req.file;      //!!!! drinkImage - домовитися в фронтендом, як однаково назвати
+    const drinkThumb = req.file.path;
 
-    if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
+
+    // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+    const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
+        const _id = new mongoose.Types.ObjectId(ingredientId);
+        return {title, measure, ingredientId: _id }; 
+      });
+
+      const result = await Recipe.create({
+            ...req.body,
+            ingredients : ingredientsJSON, 
+            drinkThumb, 
+            owner
+          }
+        );    
+
+    //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
     res.status(201).json(result);
   } 
 
@@ -157,7 +172,7 @@ const getPopularDrinks = async (req, res) => {
 const addDrinkToFavorite = async (req, res) => {
     const { id } = req.params;
   const { _id: userId } = req.user;
-
+  
   const drink = await Recipe.findById(id);
 
   if (!drink) {

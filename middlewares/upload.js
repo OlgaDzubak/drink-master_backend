@@ -1,20 +1,3 @@
-// const multer = require('multer');                                   //підключаємо бібліотеку multer
-// const path = require('path');                                       //підключаємо бібліотеку path
-
-// const tempDir = path.join(__dirname, "../", "temp");                //створюємо шлях до папки temp, де будуть тимчасово зберігатися файли, що завантажуються
-
-// const multerConfig = multer.diskStorage({                           //створюємо налаштування для multer
-//   destination: (req, file, cb) => { cb(null, tempDir); },
-//   filename: (req, file, cb) => { cb(null, file.originalname); },
-//   limits: { fileSize: 1048576, },
-// });
-
-// const upload = multer({ storage: multerConfig });                   //створюємо middleware upload
-
-// module.exports = upload;
-
-
-
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
@@ -40,10 +23,10 @@ const storage = new CloudinaryStorage({
     return {
       folder: folder,
       allowed_formats: ["jpg", "png"], // Adjust the allowed formats as needed
-      public_id: file.originalname, // Use original filename as the public ID
+      public_id: file.originalname,    // Use original filename as the public ID
       transformation: [
-        { width: 350, height: 350 },
-        { width: 700, height: 700 },
+        { height: 350, crop: "scale" },
+        { height: 700, crop: "scale" },
       ],
     };
   },

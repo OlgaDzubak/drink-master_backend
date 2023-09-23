@@ -25,7 +25,7 @@ const userSchema = new Schema(
         },
         email: {
             type: String,
-            required: [true, 'Email is required'],
+            required: [true, 'Email is required: example@mail.com'],
             match: emailRegExp,
             unique: true,
         },
@@ -121,7 +121,7 @@ const signUpSchema = joi.object({
                                     err.message = "email field should not be empty!";
                                     break;
                     case "string.pattern.base" :
-                                    err.message = "email field must be a valid email!";
+                                    err.message = "email field must be a valid email in format example@mail.com";
                                     break;
                     default:
                                     break;
