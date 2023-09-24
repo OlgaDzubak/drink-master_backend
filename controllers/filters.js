@@ -1,5 +1,5 @@
 const {Recipe} = require('../db/models/recipe');
-const {Ingridient} = require('../db/models/ingredient');
+const {Ingredient} = require('../db/models/ingredient');
 const { ctrlWrapper } = require('../helpers/');
 
 
@@ -12,8 +12,8 @@ const { ctrlWrapper } = require('../helpers/');
   }
 
   //+отримання списку інгрідієнтів із колекції ingridients
-  const getIngridients = async (req, res) => {
-    const result = await Ingridient.distinct("title");
+  const getIngredients = async (req, res) => {
+    const result = await Ingredient.distinct("title");
     res.json(result);
   }
 
@@ -27,6 +27,6 @@ const { ctrlWrapper } = require('../helpers/');
 
 module.exports = {
     getCategories: ctrlWrapper(getCategories),
-    getIngridients: ctrlWrapper(getIngridients),
+    getIngredients: ctrlWrapper(getIngredients),
     getGlasses: ctrlWrapper(getGlasses),
 }
