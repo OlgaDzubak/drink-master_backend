@@ -1,5 +1,5 @@
 const {Recipe} = require('../db/models/recipe');
-const {Ingridient} = require('../db/models/ingridient');
+const {Ingridient} = require('../db/models/ingredient');
 const { ctrlWrapper } = require('../helpers/');
 
 

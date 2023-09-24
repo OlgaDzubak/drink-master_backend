@@ -4,7 +4,7 @@ const joi = require("joi");
 const abvRegExp = /^(([1-9]|[1-9][0-9]|1[0-4][0-9]|100)([,-](?=\d)|$))+$/    // ????? перевірити регулярний вираз для поля abv: значення від 0 до 100
 
 // ----- СХЕМИ МОДЕЛІ ДАНИХ КОЛЕКЦІЇ "INGRIDIENTS" -------------------------------------------------------------------
-const ingridientSchema = new Schema(
+const ingredientSchema = new Schema(
   {
     title:{
       type: String,
@@ -61,11 +61,12 @@ const ingridientSchema = new Schema(
       timestamps: true,
   }
 );
-const Ingridient = model('Ingridient', ingridientSchema);   // створюємо модель Ingridient
+const Ingredient = model('Ingridient', ingredientSchema);   // створюємо модель Ingridient
 
 
 // ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту ДО КОЛЕКЦІЇ "INGRIDIENTS"-----------------------------------------------------------
 const getSchema = joi.object({
+  
 });
 
 const addSchema = joi.object({
@@ -78,4 +79,4 @@ const schemas = {
 
 }
 
-module.exports = { Ingridient, schemas, };
+module.exports = { Ingredient, schemas, };
