@@ -48,7 +48,7 @@ const { mongoose } = require("mongoose");
       console.log("req.user=", req.user);
       const {id: owner} = req.user;
       const filter = {owner};
-      const result = await Recipe.find(filter, {drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
+      const result = await Recipe.find(filter, {id:1, drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
       res.json(result);
     }
     
@@ -97,12 +97,12 @@ const { mongoose } = require("mongoose");
         const query = {
           $and: [
             category ? { category } : {},
-            ingredient ? { 'ingredients.title': { ingredient, $options: 'i' } } : {} ,
+            ingredient ? { 'ingredients.title': { $regex: ingredient, $options: 'i' } } : {} ,
             keyword ? {
               $or: [
-                { drink: { $regex: keyword, $options: 'i' } },
-                { instructions: { $regex: keyword, $options: 'i' } },
-                { 'ingredients.title': { $regex: keyword, $options: 'i' } },   //.replace(' ', '[^\S]')
+                { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },   //.replace(' ', '[^\S]')
               ],
             } : {},
             { alcoholic: alcoholicFilter },
@@ -127,7 +127,7 @@ const { mongoose } = require("mongoose");
     const getFavoriteDrinks = async(req, res)=>{
       const { _id: userId } = req.user;
 
-      const result = await Recipe.find({ users: { $in : [ userId ] } }, {drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
+      const result = await Recipe.find({ users: { $in : [ userId ] } }, {id:1, drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
 
       if (!result){ throw httpError(404, "Not found"); }
 
@@ -145,74 +145,43 @@ const { mongoose } = require("mongoose");
 // контроллери для POST-запитів
 
   //+ додавання напою поточним(залогіненим) юзером
-    // const addDrink = async (req, res) => {
-    //   const {_id: owner} = req.user;
-    //   const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
-    // //  const {drinkImage} = req.file;      //!!!! drinkImage - домовитися в фронтендом, як однаково назвати
-    //   const drinkThumb = req.file.path;
-
-
-    //   // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
-    //   const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
-    //       const _id = new mongoose.Types.ObjectId(ingredientId);
-    //       return {title, measure, ingredientId: _id }; 
-    //     });
-
-    //     const result = await Recipe.create({
-    //           ...req.body,
-    //           ingredients : ingredientsJSON, 
-    //           drinkThumb, 
-    //           owner
-    //         }
-    //       );    
-
-    //   //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
-    //   res.status(201).json(result);
-    // } 
-    
-    
     const addDrink = async (req, res) => {
-    console.log(req.user);
-    const {_id: owner} = req.user;
-        
-    const result = await Recipe.create({...req.body, owner});    
+      const {_id: owner} = req.user;
+      const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
+    //  const {drinkImage} = req.file;      //!!!! drinkImage - домовитися в фронтендом, як однаково назвати
+      const drinkThumb = req.file.path;
 
-    if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
-    res.status(201).json(result);
-  } 
+
+      // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+      const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
+          const _id = new mongoose.Types.ObjectId(ingredientId);
+          return {title, measure, ingredientId: _id }; 
+        });
+
+        const result = await Recipe.create({
+              ...req.body,
+              ingredients : ingredientsJSON, 
+              drinkThumb, 
+              owner
+            }
+          );    
+
+      //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+      res.status(201).json(result);
+    } 
+    
+    
+    // const addDrink = async (req, res) => {
+    // console.log(req.user);
+    // const {_id: owner} = req.user;
+        
+    // const result = await Recipe.create({...req.body, owner});    
+
+    // if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
+    // res.status(201).json(result);
+  
 
   //+ додавання напоя в favorits для поточного(залогіненого) юзера
-    // const addDrinkToFavorite = async (req, res) => {
-    //   const { id } = req.params;     // забираємо з body id паною  
-    //   const { _id: userId } = req.user;
-      
-    //   const drink = await Recipe.findById(id);
-
-    //   if (!drink) {
-    //     throw httpError(404, "Not Found");
-    //   }
-
-    //   if (!drink.users) {
-    //     drink.users = [];
-    //   }
-
-    //   const isFavorite = drink.users.includes(userId);
-
-    //   let result;
-
-    //   if (isFavorite) {
-    //     throw httpError(409, `${drink.drink} is already in your favorites.`);
-    //   } else {
-    //     result = await Recipe.findByIdAndUpdate(
-    //       drink._id, 
-    //       { $push: { users: userId } },
-    //       { new: true },
-    //     ).select({drink, category, alcoholic, glass, description, shortDescription, instructions, drinkThumb, ingredients});
-    //   }
-
-    //   res.status(201).json(result);
-    // }
-    
     const addDrinkToFavorite = async (req, res) => {
     const { id } = req.params;     // забираємо з body id паною  
     const { _id: userId } = req.user;
