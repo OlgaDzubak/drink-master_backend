@@ -130,14 +130,11 @@ const signUpSchema = joi.object({
             });
             return errors;
         }),
-    birthdate: joi.date().required().less(maxValidBirthDate).error(errors => {
+    birthdate: joi.date().required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                 case "any.required": 
                                 err.message = "missing required birthdate field";
-                                break;
-                case "date.less": 
-                                err.message = `birthdate field should not be greater then ${maxValidBirthDate}`;
                                 break;
                 default:
                                 break;
