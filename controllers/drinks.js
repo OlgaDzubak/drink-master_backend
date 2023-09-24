@@ -94,20 +94,6 @@ const { mongoose } = require("mongoose");
         const limit = parseInt(pageSize) || 10;
         const skip = (currentPage - 1) * limit;
 
-        // const query = {
-        //   $and: [
-        //     category ? { category } : {},
-        //     ingredient ? { 'ingredients.title': { ingredient, $options: 'i' } } : {} ,
-        //     keyword ? {
-        //       $or: [
-        //         { drink: { $regex: keyword, $options: 'i' } },
-        //         { instructions: { $regex: keyword, $options: 'i' } },
-        //         { 'ingredients.title': { $regex: keyword, $options: 'i' } },   //.replace(' ', '[^\S]')
-        //       ],
-        //     } : {},
-        //     { alcoholic: alcoholicFilter },
-        //   ],
-        // };
         const query = { 
           $and: [ 
             category ? { category } : {}, 
