@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/mainpage', authenticate, ctrl.getDrinksForMainPage);                               //+
 router.get('/own', authenticate, ctrl.getAllDrinks);                                            //+
 router.get('/popular', authenticate, ctrl.getPopularDrinks);                                    //+
-router.get('/search', authenticate, ctrl.searchDrinks);                                         // ???
+router.get('/search', authenticate, ctrl.searchDrinks);                                         //+
 router.get('/favorite', authenticate, ctrl.getFavoriteDrinks);                                  //+
 router.get('/:id', authenticate, validateId, ctrl.getDrinkById);                                //+
 
