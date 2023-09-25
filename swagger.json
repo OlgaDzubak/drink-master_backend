@@ -16,6 +16,18 @@
         {
             "name": "Auth",
             "description": "Authorization endpoints"
+        },
+        {
+            "name": "Users",
+            "description": "Endpoint for requesting information about the user"
+        },
+        {
+            "name": "Filters",
+            "description": "Endpoint for backend data filtering"
+        },
+        {
+            "name": "Drinks",
+            "description": "Endpoint for handling cocktails."
         }
     ],
     "paths": {
@@ -48,7 +60,7 @@
                     }
                 },
                 "400": {
-                    "description": "Bad request (invalid request body)",
+                    "description": "Bad Request",
                     "content": {}
                 },
                 "409": {
@@ -58,45 +70,218 @@
             }
             }
         },
-        "/auth/signin": {
-            "post": {
-            "tags": ["Auth"],
-            "summary": "Sign in existing user",
-            "parameters": [],
-            "security": [{ "Bearer": [] }],
-            "requestBody": {
-                "description": "# Description of the request parameters:\n**email** - string, user email.\n **password** - string, encrypted user password.",
-                "required": true,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                        "$ref": "#/components/schemas/SignInDto"
+        "/auth/verify/{verificationToken}": {
+            "get": {
+                "tags": ["Auth"],
+                "summery": "Verify email",
+                "parameters": [{
+                    "name": "verificationToken",
+                    "required": "true",
+                    "in": "path",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "description": "Верифікація email - процес підтвердження вказаної користувачем при реєстрації електронної адреси. Після реєстрації, на вакзану користувачем електронну адресу буде надісланий електронний лист, в тілі якого буде посилання з відповідним ендпоінтом та унікальним кодом верифікації. Після підтвердження дійсності електронної адреси, користувач зможе пройти процедуру авторизації (signin)",
+                "responses": {
+                    "200": {
+                        "description": "Verification successful",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyResponse"
+                            }
+                        }
+                    }
+                    },
+                    "404": {
+                        "description": "Bearer auth failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Description of the error."
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Not authorized."
+                                }
+                            }
                         }
                     }
                 }
-            },
+            }
+        },
+        "/auth/verify/": {
+            "post": {
+                "tags": ["Auth"],
+                "summery": "Resend verify email",
+                "parameters": [],
+                "description": "",
+                "requestBody": {
+                    "description": "# Description of the request parameters:\n**email** - string, user email.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                            "$ref": "#/components/schemas/ResendVerifyBody"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification email sent",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResendVerifyResponse"
+                            }
+                        }
+                    }
+                    },
+                    "400": {
+                        "description": "Verification has already been passed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Verification has already been passed"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Verification has already been passed"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "User not found"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "User not found"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signin": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "Sign in existing user",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "# Description of the request parameters:\n**email** - string, user email.\n **password** - string, encrypted user password.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                            "$ref": "#/components/schemas/SignInDto"
+                            }
+                        }
+                    }
+                },
             "responses": {
-                "201": {
+                "200": {
                     "description": "Created session for existing user",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserWithTokenSerializer"
+                                "$ref": "#/components/schemas/RegistrationResponse"
                             }
                         }
                     }
                 },
                 "400": {
-                    "description": "Bad request (invalid request body)",
-                    "content": {}
+                    "description": "Bad request",
+                    "content": {"application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Bad request"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "message": "Bad request"
+                            }
+                        }}
+                },
+                "401": {
+                    "description": "Email or password is wrong",
+                    "content": {"application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Email or password is wrong"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "message": "Email or password is wrong"
+                            }
+                        }}
                 },
                 "403": {
                     "description": "Forbidden",
-                    "content": {}
+                    "content": {"application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Forbidden"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "message": "Forbidden"
+                            }
+                        }}
                 },
                 "404": {
                     "description": "Not found",
-                    "content": {}
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Not found"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "message": "Not found"
+                            }
+                        }
+                    }
                 }
             }
             }
@@ -133,6 +318,198 @@
                 }
             }
             }
+        },
+        "/users/current": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Information about the user",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/users/update": {
+            "patch": {
+                "tags": ["Users"],
+                "summary": "Updating user information",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/users/subscribe": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Subscription to information mailing",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/filters/categories": {
+            "get": {
+                "tags": ["Filters"],
+                "summary": "Getting a list of cocktail categories",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/filters/ingredients": {
+            "get": {
+                "tags": ["Filters"],
+                "summary": "Getting the ingredients list",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/filters/glasses": {
+            "get": {
+                "tags": ["Filters"],
+                "summary": "Obtaining a list of the glass to be served",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/mainpage": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Getting cocktails for the main page",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/popular": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Getting popular cocktails",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/search": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Getting cocktails by category + ingredient + keyword",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/{id}": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Get one cocktail per ID",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/own/add": {
+            "post": {
+                "tags": ["Drinks"],
+                "summary": "Adding your own cocktail",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/own/remove": {
+            "delete": {
+                "tags": ["Drinks"],
+                "summary": "Deleting your own cocktail",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/own": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Getting your own cocktails",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/favorite/add": {
+            "post": {
+                "tags": ["Drinks"],
+                "summary": "Adding a cocktail to favorites",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/favorite/remove": {
+            "delete": {
+                "tags": ["Drinks"],
+                "summary": "Removing a cocktail from favorites",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
+        },
+        "/drinks/favorite": {
+            "get": {
+                "tags": ["Drinks"],
+                "summary": "Getting cocktails from favorites",
+                "parameters": [],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    
+                }
+            }
         }
     },
     "components": {
@@ -163,6 +540,50 @@
                     }
                 }
             },
+            "ResendVerifyBody": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    }
+                }
+            },
+            "VerifyResponse": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                    "massage": {
+                        "type": "string",
+                        "description": "Verify message",
+                        "example": "Verification successful"
+                    }
+                }
+            },
+            "ResendVerifyResponse": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                    "massage": {
+                        "type": "string",
+                        "description": "Verification email sent",
+                        "example": "Verification email sent"
+                    }
+                }
+            },
+            "ResendVerifyEmail": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                    "massage": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Verification email sent"
+                    }
+                }
+            },
             "SignInDto": {
                 "type": "object",
                 "required": ["email", "password"],
@@ -184,34 +605,38 @@
                 "items": {
                     "type": "object",
                     "properties": {
-                        "_id": {
-                            "type": "objectId",
-                            "description": "User id",
-                            "example": "skfhku4424otjrelgd"
-                        },
-                        "name": {
-                            "type": "string",
-                            "description": "Username",
-                            "example": "Oleksandr"
-                        },
-                        "email": {
-                            "type": "string",
-                            "description": "User's email",
-                            "format": "email"
-                        },
                         "token": {
                             "type": "string",
                             "description": "User's token",
-                            "example": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j"
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o"
+                        },
+                        "user": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": "objectId",
+                                    "description": "User id",
+                                    "example": "skfhku4424otjrelgd"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Username",
+                                    "example": "Oleksandr"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "User's email",
+                                    "format": "email"
+                                }
+                            } 
                         }
                     }
                 },
                 "example": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o",
                     "user": { 
-                        "_id": "skfhku4424otjrelgd",
                         "name": "Oleksandr", 
-                        "email": "1@gmail.com", 
-                        "token": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j", 
+                        "email": "1@gmail.com",  
                         "avatarURL": "http://gravatar/sdfsdf" 
                     }
                 }
@@ -239,7 +664,7 @@
                         "token": {
                             "type": "string",
                             "description": "User's token",
-                            "example": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j"
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o"
                         }
                     }
                 },
@@ -248,7 +673,7 @@
                         "_id": "skfhku4424otjrelgd",
                         "name": "Oleksandr", 
                         "email": "1@gmail.com", 
-                        "token": "3214dfgfdg36545474.sfssfwq34i.wfiwfjweofi8j", 
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o", 
                         "avatarURL": "http://gravatar/sdfsdf" 
                     }
                 }
@@ -260,6 +685,13 @@
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
