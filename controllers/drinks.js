@@ -88,10 +88,10 @@ const { mongoose } = require("mongoose");
         const userAge = 18;
         const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
         
-        const { category, ingredient, keyword, page, pageSize } = req.query;
+        const { category, ingredient, keyword, page, per_page } = req.query;
 
         const currentPage = parseInt(page) || 1;
-        const limit = parseInt(pageSize) || 10;
+        const limit = parseInt(per_page) || 10;
         const skip = (currentPage - 1) * limit;
 
         const query = {

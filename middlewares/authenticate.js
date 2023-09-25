@@ -26,7 +26,7 @@ const authenticate = async (req, res, next) => {
             }
             req.user = user;
 
-            const {_id, email, name, avatarURL} = req.user;
+            const {_id, email, name, } = req.user;
             console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name, avatarURL});
 
             next();
