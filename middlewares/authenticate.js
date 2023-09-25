@@ -21,6 +21,7 @@ const authenticate = async (req, res, next) => {
             const user = await User.findById(id);
 
             if (!user || !user.token || user.token != token ){
+                console.log("Я в bearer user || !user.token || user.token != token ");
                 next(httpError(401, "Not authorized"));
             }
             req.user = user;
@@ -31,7 +32,7 @@ const authenticate = async (req, res, next) => {
             next();
         }
     catch(error)
-        {
+        {console.log("Я в error ");
             next(httpError(401, "Not authorized"));
         }
         
