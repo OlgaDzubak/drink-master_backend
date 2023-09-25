@@ -9,39 +9,95 @@ const { mongoose } = require("mongoose");
 // контроллери для GET-запитів
 
   // + отримання масиву напоїв id для поточного(залогіненого) юзера
-    const getDrinksForMainPage = async (req, res) => {
-      const userAge = 18;
-      const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
+    // const getDrinksForMainPage = async (req, res) => {
+    //   const userAge = 18;
+    //   const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
 
-        const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
+    //     const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
 
-        const drinksForMainPage = {};
+    //     const drinksForMainPage = {};
 
-        for (const category of categories) {
-          let cocktails;
+    //     for (const category of categories) {
+    //       let cocktails;
 
-          if (category === 'Other/Unknow') {
-            const alreadySelectedCocktails = Object.values(drinksForMainPage)
-              .flatMap((cocktailArray) => cocktailArray)
-              .map((cocktail) => cocktail.drink);
+        //   if (category === 'Other/Unknow') {
+        //     const alreadySelectedCocktails = Object.values(drinksForMainPage)
+        //       .flatMap((cocktailArray) => cocktailArray)
+        //       .map((cocktail) => cocktail.id);
 
-          cocktails = await Recipe.aggregate([
-            { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
-            { $sample: { size: 3 } },
-            { $project: { _id: 0, drink: 1, drinkThumb: 1 } }
-          ]);
-        } else {
-          cocktails = await Recipe.find({
-            category,
-            alcoholic: alcoholicFilter,
-          })
-            .limit(3)
-            .select('-_id drink alcoholic drinkThumb');
-        }
-        drinksForMainPage[category] = cocktails;
-      }
-      res.json(drinksForMainPage);
-    };
+        //   cocktails = await Recipe.aggregate([
+        //     { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
+        //     { $sample: { size: 3 } },
+        //     { $project: { _id: 0, drink: 1, drinkThumb: 1 } }
+        //   ]);
+        // } else {
+        //   cocktails = await Recipe.find({
+        //     category,
+        //     alcoholic: alcoholicFilter,
+        //   })
+        //     .limit(3)
+        //     .select('-_id drink alcoholic drinkThumb');
+
+//           if (category === 'Other/Unknow') {
+//   const alreadySelectedCocktails = Object.values(drinksForMainPage)
+//     .flatMap((cocktailArray) => cocktailArray)
+//     .map((cocktail) => cocktail._id); // Використовуйте _id як унікальний ідентифікатор
+
+//   cocktails = await Recipe.aggregate([
+//     { $match: { alcoholic: alcoholicFilter, _id: { $nin: alreadySelectedCocktails } } },
+//     { $sample: { size: 3 } },
+//     { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
+//   ]);
+// } else {
+//   cocktails = await Recipe.find({
+//     category,
+//     alcoholic: alcoholicFilter,
+//   })
+//     .limit(3)
+//     .select('-_id drink alcoholic drinkThumb');
+// }
+//         }
+//         drinksForMainPage[category] = cocktails;
+//       }
+//       res.json(drinksForMainPage);
+//     };
+
+
+const getDrinksForMainPage = async (req, res) => {
+  const userAge = 18;
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
+
+  const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
+
+  const drinksForMainPage = {};
+
+  for (const category of categories) {
+    let cocktails;
+
+    if (category === 'Other/Unknow') {
+      const alreadySelectedCocktails = Object.values(drinksForMainPage)
+        .flatMap((cocktailArray) => cocktailArray)
+        .map((cocktail) => cocktail._id); // Використовуйте _id як унікальний ідентифікатор
+
+      cocktails = await Recipe.aggregate([
+        { $match: { alcoholic: alcoholicFilter, _id: { $nin: alreadySelectedCocktails } } },
+        { $sample: { size: 3 } },
+        { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
+      ]);
+    } else {
+      cocktails = await Recipe.find({
+        category,
+        alcoholic: alcoholicFilter,
+      })
+        .limit(3)
+        .select('-_id drink alcoholic drinkThumb');
+    }
+
+    drinksForMainPage[category] = cocktails;
+  }
+
+  res.json(drinksForMainPage);
+};
 
   //+отримання всіх напоїв поточного(залогіненого) юзера
     const getAllDrinks = async(req, res)=>{ 
