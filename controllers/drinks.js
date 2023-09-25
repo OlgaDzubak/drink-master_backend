@@ -36,7 +36,7 @@ const { mongoose } = require("mongoose");
             alcoholic: alcoholicFilter,
           })
             .limit(3)
-            .select('-_id drink alcoholic drinkThumb');
+            .select('_id drink alcoholic drinkThumb');
         }
         drinksForMainPage[category] = cocktails;
       }
