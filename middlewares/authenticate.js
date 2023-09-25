@@ -11,6 +11,7 @@ const authenticate = async (req, res, next) => {
     const [bearer, token] = authorization.split(" ");
     console.log(bearer, token);
     if (bearer !== "Bearer") {
+        console.log("Я в bearer !== Bearer");
         next(httpError(401, "Not authorized"));
     }
 
