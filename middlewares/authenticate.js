@@ -32,7 +32,7 @@ const authenticate = async (req, res, next) => {
             next();
         }
     catch(error)
-        {console.log("Я в error ");
+        {console.log("Я в error ", error);
             next(httpError(401, "Not authorized"));
         }
         
