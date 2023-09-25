@@ -1,6 +1,6 @@
 const express = require('express');
 const ctrl = require('../controllers/drinks');
-const {validateBody, validateId, validateQuery, validateFormData, authenticate, upload}  = require("../middlewares");
+const {validateId, validateFormData, authenticate, upload}  = require("../middlewares");
 const {schemas} = require("../db/models/recipe");
 const router = express.Router();
 
