@@ -80,25 +80,24 @@ const getDrinksForMainPage = async (req, res) => {
         .flatMap((cocktailArray) => cocktailArray)
         .map((cocktail) => cocktail._id); // Використовуйте _id як унікальний ідентифікатор
 
-      cocktails = await Recipe.aggregate([
-        { $match: { alcoholic: alcoholicFilter, _id: { $nin: alreadySelectedCocktails } } },
-        { $sample: { size: 3 } },
-        { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
-      ]);
-    } else {
-      cocktails = await Recipe.find({
-        category,
-        alcoholic: alcoholicFilter,
-      })
-        .limit(3)
-        .select('-_id drink alcoholic drinkThumb');
-    }
+          cocktails = await Recipe.aggregate([
+            { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
+            { $sample: { size: 3 } },
+            { $project: { _id: 0, drink: 1, drinkThumb: 1 } }
+          ]);
+        } else {
+          cocktails = await Recipe.find({
+            category,
+            alcoholic: alcoholicFilter,
+          })
+            .limit(3)
+            .select('_id drink alcoholic drinkThumb');
+        }
+        drinksForMainPage[category] = cocktails;
+      }
+      res.json(drinksForMainPage);
+    };
 
-    drinksForMainPage[category] = cocktails;
-  }
-
-  res.json(drinksForMainPage);
-};
 
   //+отримання всіх напоїв поточного(залогіненого) юзера
     const getAllDrinks = async(req, res)=>{ 
@@ -171,7 +170,7 @@ const getDrinksForMainPage = async (req, res) => {
         const drinks = await Recipe.find(query)
           .skip(skip)
           .limit(limit)
-          .select('-_id drink drinkThumb category instructions description shortDescription ingredients.title');
+          .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
 
         res.status(200).json({ drinks, totalResults });
       } catch (error) {
