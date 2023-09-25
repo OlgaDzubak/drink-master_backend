@@ -114,7 +114,7 @@ const { mongoose } = require("mongoose");
         const drinks = await Recipe.find(query)
           .skip(skip)
           .limit(limit)
-          .select('-_id drink drinkThumb category instructions description shortDescription ingredients.title');
+          .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
 
         res.status(200).json({ drinks, totalResults });
       } catch (error) {
