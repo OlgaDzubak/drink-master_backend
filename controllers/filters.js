@@ -13,7 +13,8 @@ const { ctrlWrapper } = require('../helpers/');
 
   //+отримання списку інгрідієнтів із колекції ingridients
   const getIngredients = async (req, res) => {
-    const result = await Ingredient.distinct("title");
+   // const result = await Ingredient.distinct("title");
+     const result = await Ingredient.find().select('_id title ingredientThumb');
     res.json(result);
   }
 
