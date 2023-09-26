@@ -9,7 +9,7 @@
             "url": "https://opensource.org/licenses/MIT"
         }
     },
-    "consumes": ["application/json"],
+    "consumes": ["application/json", "multipart/form-data"],
     "produces": ["application/json"],
     "servers": [{ "url": "https://drink-master-server.onrender.com" }],
     "tags": [
@@ -36,7 +36,6 @@
             "tags": ["Auth"],
             "summary": "Sign up new user - User registration",
             "parameters": [],
-            "security": [{ "Bearer": [] }],
             "requestBody": {
                 "description": "# Description of the request parameters:\n**name** - string, user name.\n**email** - string, user email.\n**password** - string, encrypted user password. \n**birthdate** - date, user's date of birth",
                 "required": true,
@@ -190,7 +189,6 @@
                 "tags": ["Auth"],
                 "summary": "Sign in existing user",
                 "parameters": [],
-                "security": [{ "Bearer": [] }],
                 "requestBody": {
                     "description": "# Description of the request parameters:\n**email** - string, user email.\n **password** - string, encrypted user password.",
                     "required": true,
@@ -298,7 +296,7 @@
                     "description": "User signed out"
                 },
                 "401": {
-                    "description": "Bearer auth failed",
+                    "description": "Not authorized",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -324,10 +322,37 @@
                 "tags": ["Users"],
                 "summary": "Information about the user",
                 "parameters": [],
-                "description": "",
+                "description": "Information about the user",
                 "security": [{ "Bearer": [] }],
                 "responses": {
-                    
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Description of the error."
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Not authorized."
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -335,11 +360,61 @@
             "patch": {
                 "tags": ["Users"],
                 "summary": "Updating user information",
+                "consumes": ["multipart/form-data", "application/json"],
                 "parameters": [],
-                "description": "",
+                "description": "Updating user information",
                 "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "# Description of the request parameters:\n**name** - string, user name.",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "in": "formData",
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "type": "file",
+                                        "format": "binary"
+                                    }  
+                                }
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Description of the error."
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Not authorized."
+                                }
+                            }
+                        }
+                    } 
                 }
             }
         },
@@ -350,11 +425,58 @@
                 "parameters": [],
                 "description": "",
                 "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "# Description of the request parameters:\n**email** - string, user email.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubscribeRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Subscribtion successful. Letters about subscribtion was sent to your email ..."
+                                        }  
+                                    }
+                                },
+                                "example": {
+                                    "message": "Subscribtion successful. Letters about subscribtion was sent to your email ..."
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Description of the error."
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Not authorized."
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
+
         "/filters/categories": {
             "get": {
                 "tags": ["Filters"],
@@ -540,6 +662,44 @@
                     }
                 }
             },
+            "RegistrationResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "User's token",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o"
+                    },
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Username",
+                                "example": "Oleksandr"
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "User's email",
+                                "format": "email"
+                            },
+                            "avatarURL": {
+                                "type": "string",
+                                "description": "User's email",
+                                "example": "http://gravatar/sdfsdf"
+                            }
+                        } 
+                    }
+                },
+                "example": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o",
+                    "user": { 
+                        "name": "Oleksandr", 
+                        "email": "1@gmail.com",  
+                        "avatarURL": "http://gravatar/sdfsdf" 
+                    }
+                }
+            },
             "ResendVerifyBody": {
                 "type": "object",
                 "required": ["email"],
@@ -573,17 +733,6 @@
                     }
                 }
             },
-            "ResendVerifyEmail": {
-                "type": "object",
-                "required": ["message"],
-                "properties": {
-                    "massage": {
-                        "type": "string",
-                        "description": "Message",
-                        "example": "Verification email sent"
-                    }
-                }
-            },
             "SignInDto": {
                 "type": "object",
                 "required": ["email", "password"],
@@ -600,81 +749,69 @@
                     }
                 }
             },
-            "RegistrationResponse": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "token": {
-                            "type": "string",
-                            "description": "User's token",
-                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o"
-                        },
-                        "user": {
-                            "type": "object",
-                            "properties": {
-                                "_id": {
-                                    "type": "objectId",
-                                    "description": "User id",
-                                    "example": "skfhku4424otjrelgd"
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "description": "Username",
-                                    "example": "Oleksandr"
-                                },
-                                "email": {
-                                    "type": "string",
-                                    "description": "User's email",
-                                    "format": "email"
-                                }
-                            } 
-                        }
+            "CurrentResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "objectId",
+                        "description": "User id",
+                        "example": "skfhku4424otjrelgd"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Username",
+                        "example": "Oleksandr"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "User's avatar",
+                        "example": "https://res.cloudinary.com/dxvnh0oip/image/upload/v1695434633/avatars/User_vzgcyg.png"
                     }
                 },
                 "example": {
-                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o",
-                    "user": { 
-                        "name": "Oleksandr", 
-                        "email": "1@gmail.com",  
-                        "avatarURL": "http://gravatar/sdfsdf" 
+                    "_id": "skfhku4424otjrelgd",
+                    "name": "Oleksandr", 
+                    "email": "1@gmail.com", 
+                    "avatarURL": "https://res.cloudinary.com/dxvnh0oip/image/upload/v1695434633/avatars/User_vzgcyg.png" 
+                }
+            },
+            "UpdateUserRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Username",
+                        "example": "Mykola"
                     }
                 }
             },
-            "UserWithTokenSerializer": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "_id": {
-                            "type": "objectId",
-                            "description": "User id",
-                            "example": "skfhku4424otjrelgd"
-                        },
-                        "name": {
-                            "type": "string",
-                            "description": "Username",
-                            "example": "Oleksandr"
-                        },
-                        "email": {
-                            "type": "string",
-                            "description": "User's email",
-                            "format": "email"
-                        },
-                        "token": {
-                            "type": "string",
-                            "description": "User's token",
-                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o"
-                        }
+            "UpdateUserResponse": {
+                "type": "object",
+                "properties": {
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "User's avatar",
+                        "example": "http://gravatar/sdfsdf"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Username",
+                        "example": "Mykola"
                     }
-                },
-                "example": {
-                    "user": { 
-                        "_id": "skfhku4424otjrelgd",
-                        "name": "Oleksandr", 
-                        "email": "1@gmail.com", 
-                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MTA5MzAyM2MwNmVmNjEyNDEyNzE3ZSIsImlhdCI6MTY5NTU4NTAyNiwiZXhwIjoxNjk1NjY3ODI2fQ.Y2uXGZHuC6poRda96zbJk1SFe0HY0BOZnOvzGaOd0-o", 
-                        "avatarURL": "http://gravatar/sdfsdf" 
+                }
+            },
+            "SubscribeRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
                     }
                 }
             }
