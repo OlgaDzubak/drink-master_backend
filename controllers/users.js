@@ -24,14 +24,17 @@ const {SECRET_KEY, BASE_URL} = process.env;
     
     const {name} = req.body;                                               // забираємо нове ім'я поточного юзера з http-запиту
     const {_id, avatarURL} = req.user;                                     // забираємо id поточного юзера
-    
-    if (req.file) { newAvatarURL = req.file.path; }
-    else { newAvatarURL =avatarURL; }
-    
-    await User.findByIdAndUpdate(_id, {avatarURL:newAvatarURL , name}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
-        
-    res.json({ avatarURL, name});
+
+    if (req.file) { 
+      newAvatarURL = req.file.path;  
+    }
+    else { 
+      newAvatarURL =avatarURL; 
+    }
+    const usr = await User.findByIdAndUpdate(_id, {avatarURL: newAvatarURL , name}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
+    res.json({ avatarURL: usr.avatarURL, name: usr.name});
   }
+
 
 
 //+ надсилання листа з повідомленням про підписку на розсилку
