@@ -187,15 +187,23 @@ const getDrinksForMainPage = async (req, res) => {
     };
 
   //+ отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
-    const getFavoriteDrinks = async(req, res)=>{
+    const getFavoriteDrinks = async (req, res) => {
       const { _id: userId } = req.user;
-
-      const result = await Recipe.find({ users: { $in : [ userId ] } }, {id:1, drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
-
-      if (!result){ throw httpError(404, "Not found"); }
-
-      res.json(result);
-    }
+      const { page, per_page } = req.query;
+      const currentPage = parseInt(page)  10;
+      const skip = (currentPage - 1) * limit;
+      try {
+        const result = await Recipe.find(
+          { users: { $in: [userId] } },
+          { id: 1, drink: 1, category: 1, alcoholic: 1, glass: 1, description: 1, shortDescription: 1, instructions: 1, drinkThumb: 1, ingredients: 1 }
+        )
+          .skip(skip)
+          .limit(limit);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    };
 
   //+ отримання напою за йього _id для поточного(залогіненого) юзера
     const getDrinkById = async (req, res) => {
