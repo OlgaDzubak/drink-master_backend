@@ -19,24 +19,23 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
-  const updateUser  = async(req, res) => {
-    
-    console.log("Я в updateUser");
-    
+  
+const updateUser  = async(req, res) => {
+    console.log("---- updateUser function ---- ");
     let newAvatarURL;
-    
-    const {name} = req.body;                                               // забираємо нове ім'я поточного юзера з http-запиту
-    const {_id, avatarURL} = req.user;                                     // забираємо id поточного юзера
 
+    const {_id, currentAvatarURL, name: currentUserName} = req.user;              // забираємо id поточного юзера
+    const {name = currentUserName} = req.body;                                    // забираємо нове ім'я поточного юзера з http-запиту
+  
     if (req.file) { 
-      console.log("req.file = ",req.file);
       newAvatarURL = req.file.path;  
     }
     else { 
-      newAvatarURL =avatarURL; 
+      console.log("req.file = ", req.file);
+      newAvatarURL = currentAvatarURL; 
     }
-    const usr = await User.findByIdAndUpdate(_id, {avatarURL: newAvatarURL , name}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
-    res.json({ avatarURL: usr.avatarURL, name: usr.name});
+    const usr = await User.findByIdAndUpdate(_id, {name, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
+    res.json({name: usr.name, avatarURL: usr.avatarURL });
   }
 
 
