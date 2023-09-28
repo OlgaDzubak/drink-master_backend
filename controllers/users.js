@@ -26,6 +26,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const {_id, avatarURL} = req.user;                                     // забираємо id поточного юзера
 
     if (req.file) { 
+      console.log("req.file = ",req.file);
       newAvatarURL = req.file.path;  
     }
     else { 
