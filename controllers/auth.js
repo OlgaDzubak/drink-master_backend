@@ -47,6 +47,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "name": newUser.name,
         "email": newUser.email,
         "avatarURL": newUser.avatarURL,
+        "birthdate": user.birthdate,
       }
     });
     
@@ -110,6 +111,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "name": user.name,
         "email": user.email,
         "avatarURL": user.avatarURL,
+        "birthdate": user.birthdate,
       }
     });
   }
