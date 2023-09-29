@@ -9,53 +9,65 @@ const { mongoose } = require("mongoose");
 // контроллери для GET-запитів
 
   // + отримання масиву напоїв id для поточного(залогіненого) юзера
-   
+    // + отримання масиву напоїв id для поточного(залогіненого) юзера
+    // const getDrinksForMainPage = async (req, res) => {
+    //   const userAge = 18;
+    //   const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
 
-// const getDrinksForMainPage = async (req, res) => {
-//   const userAge = 18;
-//   const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
+    //     const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknow'];
 
-//   const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown'];
+    //     const drinksForMainPage = {};
 
-//   const drinksForMainPage = {};
+    //     for (const category of categories) {
+    //       let cocktails;
 
-//   for (const category of categories) {
-//     let cocktails = [];
-    
-//     if (category === 'Other/Unknown') {
-//       const uniqueCategories = categories.filter(cat => cat !== 'Other/Unknown');
-//       const uniqueCocktails = new Set();
+        //   if (category === 'Other/Unknow') {
+        //     const alreadySelectedCocktails = Object.values(drinksForMainPage)
+        //       .flatMap((cocktailArray) => cocktailArray)
+        //       .map((cocktail) => cocktail.id);
 
-//       while (uniqueCocktails.size < 3) {
-//         const randomCategory = uniqueCategories[Math.floor(Math.random() * uniqueCategories.length)];
-//         const randomCocktail = await Recipe.aggregate([
-//           { $match: { category: randomCategory, alcoholic: alcoholicFilter } },
-//           { $sample: { size: 1 } },
-//           { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
-//         ]);
-//         uniqueCocktails.add(randomCocktail[0]);
+        //   cocktails = await Recipe.aggregate([
+        //     { $match: { alcoholic: alcoholicFilter, drink: { $nin: alreadySelectedCocktails } } },
+        //     { $sample: { size: 3 } },
+        //     { $project: { _id: 0, drink: 1, drinkThumb: 1 } }
+        //   ]);
+        // } else {
+        //   cocktails = await Recipe.find({
+        //     category,
+        //     alcoholic: alcoholicFilter,
+        //   })
+        //     .limit(3)
+        //     .select('-_id drink alcoholic drinkThumb');
+
+//           if (category === 'Other/Unknow') {
+//   const alreadySelectedCocktails = Object.values(drinksForMainPage)
+//     .flatMap((cocktailArray) => cocktailArray)
+//     .map((cocktail) => cocktail._id); // Використовуйте _id як унікальний ідентифікатор
+
+//   cocktails = await Recipe.aggregate([
+//     { $match: { alcoholic: alcoholicFilter, _id: { $nin: alreadySelectedCocktails } } },
+//     { $sample: { size: 3 } },
+//     { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
+//   ]);
+// } else {
+//   cocktails = await Recipe.find({
+//     category,
+//     alcoholic: alcoholicFilter,
+//   })
+//     .limit(3)
+//     .select('-_id drink alcoholic drinkThumb');
+// }
+//         }
+//         drinksForMainPage[category] = cocktails;
 //       }
+//       res.json(drinksForMainPage);
+//     };
 
-//       cocktails = Array.from(uniqueCocktails);
-//     } else {
-//       cocktails = await Recipe.aggregate([
-//         { $match: { category, alcoholic: alcoholicFilter } },
-//         { $sample: { size: 3 } },
-//         { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
-//       ]);
-//     }
-
-//     drinksForMainPage[category] = cocktails;
-//   }
-
-//   res.json(drinksForMainPage);
-// };
 
 
 const getDrinksForMainPage = async (req, res) => {
-  const userBirthDate = req.user.birthdate;
-  const currentDate = new Date();
-  const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
+  const userAge = 18;
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
 
   const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown'];
 
@@ -63,7 +75,7 @@ const getDrinksForMainPage = async (req, res) => {
 
   for (const category of categories) {
     let cocktails = [];
-
+    
     if (category === 'Other/Unknown') {
       const uniqueCategories = categories.filter(cat => cat !== 'Other/Unknown');
       const uniqueCocktails = new Set();
@@ -71,9 +83,9 @@ const getDrinksForMainPage = async (req, res) => {
       while (uniqueCocktails.size < 3) {
         const randomCategory = uniqueCategories[Math.floor(Math.random() * uniqueCategories.length)];
         const randomCocktail = await Recipe.aggregate([
-          { $match: { category: randomCategory, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' } },
+          { $match: { category: randomCategory, alcoholic: alcoholicFilter } },
           { $sample: { size: 1 } },
-          { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
+          { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
         ]);
         uniqueCocktails.add(randomCocktail[0]);
       }
@@ -81,16 +93,16 @@ const getDrinksForMainPage = async (req, res) => {
       cocktails = Array.from(uniqueCocktails);
     } else {
       cocktails = await Recipe.aggregate([
-        { $match: { category, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' } },
+        { $match: { category, alcoholic: alcoholicFilter } },
         { $sample: { size: 3 } },
-        { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
+        { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
       ]);
     }
 
     drinksForMainPage[category] = cocktails;
   }
 
-  res.json({ user: { birthDate: userBirthDate }, drinksForMainPage });
+  res.json(drinksForMainPage);
 };
 
 
@@ -105,89 +117,74 @@ const getDrinksForMainPage = async (req, res) => {
     
   //+ отримання популярних напоїв: 
     const getPopularDrinks = async (req, res) => {
-  try {
-    const userBirthDate = req.user.birthdate;
-    const currentDate = new Date();
-    const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
+        const userId = req.user._id;
 
-    const userId = req.user._id;
+        const user = await User.findById(userId);
+        if (!user || !user.favorites || user.favorites.length === 0) {
+          const randomDrinks = await Recipe.aggregate([
+            { $sample: { size: 9 } },
+            { $project: { _id: 0, drink: 1, drinkThumb: 1 } } 
+          ]);
 
-    const user = await User.findById(userId);
-    if (!user  !user.favorites  user.favorites.length === 0) {
-      const randomDrinks = await Recipe.aggregate([
-        { $sample: { size: 9 } },
-        {
-          $project: { _id: 0, drink: 1, drinkThumb: 1, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' }
-        } 
-      ]);
+          res.status(200).json(randomDrinks);
+        } else {
+          const userFavorites = user.favorites;
+          const favoriteCocktail = await Recipe.findById(userFavorites[0]);
+          const category = favoriteCocktail.category;
+          const favoriteIngredients = favoriteCocktail.ingredients.map((ingredient) => ingredient.title);
 
-      res.status(200).json(randomDrinks);
-    } else {
-      const userFavorites = user.favorites;
-      const favoriteCocktail = await Recipe.findById(userFavorites[0]);
-      const category = favoriteCocktail.category;
-      const favoriteIngredients = favoriteCocktail.ingredients.map((ingredient) => ingredient.title);
+          const similarDrinks = await Recipe.find({
+            category: category,
+            'ingredients.title': { $in: favoriteIngredients },
+            _id: { $nin: userFavorites },
+          })
+            .limit(9)
+            .select('-_id drink drinkThumb'); 
 
-      const similarDrinks = await Recipe.find({
-        category: category,
-        'ingredients.title': { $in: favoriteIngredients },
-        _id: { $nin: userFavorites },
-        alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic',
-      })
-        .limit(9)
-        .select('-_id drink drinkThumb alcoholic'); 
-
-      res.status(200).json(similarDrinks);
+          res.status(200).json(similarDrinks);
+        }
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при отриманні популярних коктейлів' });
-  }
-};
 
   //+ пошук напоїв за категорією + інгредієнтам + ключовим словом 
-   const searchDrinks = async (req, res) => {
-  try {
-    const userBirthDate = req.user.birthdate;
-    const currentDate = new Date();
-    const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
+    const searchDrinks = async (req, res) => {
+      try {
+        const userAge = 18;
+        const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
+        
+        const { category, ingredient, keyword, page, per_page } = req.query;
 
-    const { category, ingredient, keyword, page, per_page } = req.query;
+        const currentPage = parseInt(page) || 1;
+        const limit = parseInt(per_page) || 10;
+        const skip = (currentPage - 1) * limit;
 
-    const currentPage = parseInt(page)  1;
-    const limit = parseInt(per_page)  10;
-    const skip = (currentPage - 1) * limit;
-
-    const alcoholicFilter = ageFilter ? 'Alcoholic' : 'Non alcoholic';
-
-    const query = {
-      $and: [
-        category ? { category } : {},
-        ingredient ? { 'ingredients.title': { $regex: ingredient, $options: 'i' } } : {},
-        keyword ? {
-          $or: [
-            { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
-            { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
-            { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+        const query = {
+          $and: [
+            category ? { category } : {},
+            ingredient ? { 'ingredients.title': { $regex: ingredient, $options: 'i' } } : {} ,
+            keyword ? {
+              $or: [
+                { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },   //.replace(' ', '[^\S]')
+              ],
+            } : {},
+            { alcoholic: alcoholicFilter },
           ],
-        } : {},
-        { alcoholic: alcoholicFilter },
-      ],
+        };
+
+        const totalResults = await Recipe.countDocuments(query);
+
+        const drinks = await Recipe.find(query)
+          .skip(skip)
+          .limit(limit)
+          .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
+
+        res.status(200).json({ drinks, totalResults });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
+      }
     };
-
-    const totalResults = await Recipe.countDocuments(query);
-
-    const drinks = await Recipe.find(query)
-      .skip(skip)
-      .limit(limit)
-      .select('_id drink alcoholic drinkThumb category instructions description shortDescription ingredients.title');
-
-    res.status(200).json({ drinks, totalResults });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
-  }
-};
 
   //+ отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
     const getFavoriteDrinks = async (req, res) => {
