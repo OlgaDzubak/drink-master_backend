@@ -54,7 +54,7 @@ const updateUser  = async(req, res) => {
                 <p  style="font-size: 16px"> Thank you! </p>
 
                 <p  style="font-size: 14px"> Visit out site! 
-                  <a target="_blank" href="${BASE_URL}" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
+                  <a target="_blank" href="https://dimachernyaev.github.io/drinkMaster-Team-1" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
                 </p>`
       };
       
