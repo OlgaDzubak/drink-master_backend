@@ -7,11 +7,11 @@ const {SECRET_KEY} = process.env;
 
 // middleware <authenticate> для перевірки токена
 const authenticate = async (req, res, next) => {
+    
     const {authorization = ""} = req.headers;
     const [bearer, token] = authorization.split(" ");
-    console.log(bearer, token);
+    
     if (bearer !== "Bearer") {
-        console.log("Я в bearer !== Bearer");
         next(httpError(401, "Not authorized"));
     }
 
@@ -21,18 +21,17 @@ const authenticate = async (req, res, next) => {
             const user = await User.findById(id);
 
             if (!user || !user.token || user.token != token ){
-                console.log("Я в bearer user || !user.token || user.token != token ");
                 next(httpError(401, "Not authorized"));
             }
             req.user = user;
 
-            const {_id, email, name, avatarURL} = req.user;
-            console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name, avatarURL});
+            const {_id, email, name, avatarURL, birthdate} = req.user;
+            console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name, avatarURL, birthdate});
 
             next();
         }
     catch(error)
-        {console.log("Я в error ", error);
+        {
             next(httpError(401, "Not authorized"));
         }
         
