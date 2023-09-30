@@ -21,7 +21,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
   
 const updateUser  = async(req, res) => {
-    let {id, avatarURL, name} = req.user;              // забираємо id поточного юзера
+    let {_id, avatarURL, name} = req.user;              // забираємо id поточного юзера
     let {name : newUserName} = req.body;                // забираємо нове ім'я поточного юзера з http-запиту
 
     console.log("req.file.path = ", req.file.path);
@@ -29,7 +29,7 @@ const updateUser  = async(req, res) => {
     if (newUserName) {name = newUserName }
     if (req.file) { avatarURL = req.file.path; }
         
-    const usr = await User.findByIdAndUpdate(id, {name, avatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
+    const usr = await User.findByIdAndUpdate(_id, {name, avatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
     
     res.json({name, avatarURL });
   }
