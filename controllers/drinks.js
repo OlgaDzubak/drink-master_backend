@@ -91,7 +91,7 @@ const {differenceInYears} = require('date-fns')
         alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic',
       })
         .limit(9)
-        .select('-_id drink drinkThumb alcoholic'); 
+        .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
 
       res.status(200).json(similarDrinks);
         }
