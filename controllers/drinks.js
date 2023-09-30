@@ -73,7 +73,7 @@ const {differenceInYears} = require('date-fns')
       const randomDrinks = await Recipe.aggregate([
         { $sample: { size: 9 } },
         {
-          $project: { _id: 0, drink: 1, drinkThumb: 1, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' }
+          $project: { _id: 1, drink: 1, drinkThumb: 1, category:1, instructions:1, description:1, shortDescription:1, ingredients:1, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' }
         } 
       ]);
 
@@ -91,7 +91,7 @@ const {differenceInYears} = require('date-fns')
         alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic',
       })
         .limit(9)
-        .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
+        .select('-_id drink drinkThumb category instructions description shortDescription ingredients.title:1 alcoholic'); 
 
       res.status(200).json(similarDrinks);
         }
