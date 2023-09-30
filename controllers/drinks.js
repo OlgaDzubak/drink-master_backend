@@ -196,7 +196,7 @@ const searchDrinks = async (req, res) => {
             }
           );    
 
-      //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+      if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
       res.status(201).json(result);
     } 
         
