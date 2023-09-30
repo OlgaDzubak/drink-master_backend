@@ -10,11 +10,10 @@ const {differenceInYears} = require('date-fns')
 // контроллери для GET-запитів
 
   // + отримання масиву напоїв id для поточного(залогіненого) юзера
-   
+
 const getDrinksForMainPage = async (req, res) => {
-  const userBirthDate = req.user.birthdate;
-  const currentDate = new Date();
-  const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
+  const userAge = 18;
+  const alcoholicFilter = userAge >= 18 ? 'Alcoholic' : 'Non alcoholic';
 
   const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown'];
 
@@ -22,7 +21,7 @@ const getDrinksForMainPage = async (req, res) => {
 
   for (const category of categories) {
     let cocktails = [];
-
+    
     if (category === 'Other/Unknown') {
       const uniqueCategories = categories.filter(cat => cat !== 'Other/Unknown');
       const uniqueCocktails = new Set();
@@ -30,9 +29,9 @@ const getDrinksForMainPage = async (req, res) => {
       while (uniqueCocktails.size < 3) {
         const randomCategory = uniqueCategories[Math.floor(Math.random() * uniqueCategories.length)];
         const randomCocktail = await Recipe.aggregate([
-          { $match: { category: randomCategory, alcoholic: ageFilter ? 'Alcoholic' : 'Non alcoholic' } },
+          { $match: { category: randomCategory, alcoholic: alcoholicFilter } },
           { $sample: { size: 1 } },
-          { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
+          { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
         ]);
         uniqueCocktails.add(randomCocktail[0]);
       }
@@ -43,14 +42,14 @@ const getDrinksForMainPage = async (req, res) => {
       cocktails = await Recipe.aggregate([
         { $match: { category, alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic' } },
         { $sample: { size: 3 } },
-        { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
+        { $project: { _id: 1, drink: 1, drinkThumb: 1 } }
       ]);
     }
 
     drinksForMainPage[category] = cocktails;
   }
 
-  res.json({ user: { birthDate: userBirthDate }, drinksForMainPage });
+  res.json(drinksForMainPage);
 };
 
 
@@ -64,10 +63,9 @@ const getDrinksForMainPage = async (req, res) => {
       res.json(result);
     }
     
-  //+ отримання популярних напоїв:
 
-const getPopularDrinks = async (req, res) => {
-  try {
+ //+ отримання популярних напоїв:
+  const getPopularDrinks = async (req, res) => {
     const userBirthDate = req.user.birthdate;
     const currentDate = new Date();
     const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
@@ -100,15 +98,10 @@ const getPopularDrinks = async (req, res) => {
         .select('-_id drink drinkThumb alcoholic'); 
 
       res.status(200).json(similarDrinks);
+        }
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при отриманні популярних коктейлів' });
-  }
-};
 
   //+ пошук напоїв за категорією + інгредієнтам + ключовим словом
-
 const searchDrinks = async (req, res) => {
   try {
     const userBirthDate = req.user.birthdate;
@@ -132,25 +125,25 @@ const searchDrinks = async (req, res) => {
             { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
             { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
             { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+           ],
+         } : {},
+         { alcoholic: alcoholicFilter },
           ],
-        } : {},
-        { alcoholic: alcoholicFilter },
-      ],
+        };
+
+        const totalResults = await Recipe.countDocuments(query);
+
+        const drinks = await Recipe.find(query)
+          .skip(skip)
+          .limit(limit)
+          .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
+
+        res.status(200).json({ drinks, totalResults });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
+      }
     };
-
-    const totalResults = await Recipe.countDocuments(query);
-
-    const drinks = await Recipe.find(query)
-      .skip(skip)
-      .limit(limit)
-      .select('_id drink alcoholic drinkThumb category instructions description shortDescription ingredients.title');
-
-    res.status(200).json({ drinks, totalResults });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
-  }
-};
 
   //+ отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
     const getFavoriteDrinks = async (req, res) => {
