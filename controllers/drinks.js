@@ -180,9 +180,7 @@ const searchDrinks = async (req, res) => {
     const addDrink = async (req, res) => {
       const {_id: owner} = req.user;
       const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
-    //  const {drinkImage} = req.file;      //!!!! drinkImage - домовитися в фронтендом, як однаково назвати
       const drinkThumb = req.file.path;
-
 
       // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
       const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
@@ -201,8 +199,7 @@ const searchDrinks = async (req, res) => {
       //if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
       res.status(201).json(result);
     } 
-    
-    
+        
     // const addDrink = async (req, res) => {
     // console.log(req.user);
     // const {_id: owner} = req.user;
