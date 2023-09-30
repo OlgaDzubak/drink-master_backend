@@ -22,7 +22,9 @@ const {SECRET_KEY, BASE_URL} = process.env;
   
 const updateUser  = async(req, res) => {
     let {_id, avatarURL, name} = req.user;              // забираємо id поточного юзера
-    let {name : newUserName} = req.body;                // забираємо нове ім'я поточного юзера з http-запиту
+    let {name : newUserName} = req.body;                                    // забираємо нове ім'я поточного юзера з http-запиту
+    
+    console.log("req.file",req.file);
     
     if (newUserName) {name = newUserName }
     if (req.file) { avatarURL = req.file.path; }
