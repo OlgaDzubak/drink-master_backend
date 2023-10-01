@@ -1,13 +1,20 @@
+console.log("я в начале upload", newAvatarURL);
+
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+
+console.log("я в начале upload после require('multer');");
+
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
-  secure: true,
 });
+
+console.log("я в upload после loudinary.config");
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -33,6 +40,8 @@ const storage = new CloudinaryStorage({
   },
 });
 
+console.log("я в upload перед  multer({ storage });");
 const upload = multer({ storage });
 
+console.log("я в upload после  multer({ storage });");
 module.exports = upload;
