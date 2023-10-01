@@ -19,7 +19,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
-  
+    
 const updateUser  = async(req, res) => {
     let {_id, avatarURL, name} = req.user;              // забираємо id поточного юзера
     let {name : newUserName} = req.body;                // забираємо нове ім'я поточного юзера з http-запиту
@@ -35,6 +35,7 @@ const updateUser  = async(req, res) => {
     
     res.json({name, avatarURL });
   }
+
 
 
 //+ надсилання листа з повідомленням про підписку на розсилку
