@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const {v4} = require('uuid');
 const path = require("path");
+const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
+
 
 const {SECRET_KEY, BASE_URL} = process.env;
 
@@ -18,22 +20,42 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 
 //+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
-  //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary  const updateUser  = async(req, res) => {
-  const updateUser  = async(req, res) => {
-    console.log("---- updateUser function ---- ");
-    let newAvatarURL, newUserName;
+ const updateUser  = async(req, res) => {
 
-    const {_id, currentAvatarURL, name: currentUserName} = req.user;              // забираємо id поточного юзера
-    const {name} = req.body;                                    // забираємо нове ім'я поточного юзера з http-запиту
+    let newUserName, newAvatarURL;
+
+    console.log("Я в updateUser", req.name);
+    console.log("req.name= ", req.name);
+    console.log("req.file= ", req.file);
+
+    const {_id, name: currentUserName} = req.user;                                                  //забираємо поточне ім'я юзера
+    const {name} = req.body;                                                                        //забираємо нове ім'я юзера
     
-    if (name) { newUserName = name }
-    else { newUserName = currentUserName} 
+    if (!name) { newUserName = currentUserName}
+    else       { newUserName = name}
+    
+    if (!req.file)                                                                                  // якщо нового файлу аватара немає, то змінемо лише ім'я юзера
+      {                                                                                              
+        const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});            // оновлюємо ім'я поточного юзера   
+        res.json({ name: usr.name});   
+      }
+    else                                                                                            // якщо є новий файл аватара, то закидуємо йього на claudinary, та оновлюємо name і avatatURL юзера
+      {                                                                                           
+        newAvatarURL = req.file.path;
 
-    if (req.file) { newAvatarURL = req.file.path;  }
-    else { newAvatarURL = currentAvatarURL; }
+        cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+          if (error) {   
+              console.error(error);
+              return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+          }
+          const { secure_url: newAvatarURL} = result;                                                 // отрисуємо з claudinary новий URL аватара 
+        
+        }).end(req.file.buffer);
 
-    const usr = await User.findByIdAndUpdate(_id, {name:newUserName, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
-    res.json({name: usr.name, avatarURL: usr.avatarURL });
+        const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поля name та avatarURL для поточного юзера в базі
+          
+        res.json({name: usr.name , avatarUrl: usr.avatarURL });
+      }                
   }
 
 
