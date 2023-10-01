@@ -20,27 +20,20 @@ const {SECRET_KEY, BASE_URL} = process.env;
 //+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   //const avatarsDir = path.join(__dirname, "../", "public", "avatars");   //!!!!змінити на cloudinary
   const updateUser  = async(req, res) => {
-    console.log("---- updateUser function ---- ");
-    let newAvatarURL;
-
-    const {_id, currentAvatarURL, name: currentUserName} = req.user;              // забираємо id поточного юзера
-    const {name = currentUserName} = req.body;                                    // забираємо нове ім'я поточного юзера з http-запиту
+    let {_id, avatarURL, name} = req.user;              // забираємо id поточного юзера
+    let {name : newUserName} = req.body;                // забираємо нове ім'я поточного юзера з http-запиту
     
-    console.log("req.file = ", req.file);
-
-    if (req.file) { 
-      newAvatarURL = req.file.path;  
-      console.log("newAvatarURL = req.file.path =", newAvatarURL);
-    }
-    else { 
-      console.log("newAvatarURL =currentAvatarURL =", newAvatarURL);
-      newAvatarURL = currentAvatarURL; 
-    }
-    console.log("я перед findByIdAndUpdate =");
-    const usr = await User.findByIdAndUpdate(_id, {name, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
-    res.json({name: usr.name, avatarURL: usr.avatarURL });
+    console.log("name = ", name);
+    console.log("newUserNamename = ", newUserName);
+    console.log("req.file.path = ", req.file.path);
+    
+    if (newUserName) {name = newUserName }
+    if (req.file) { avatarURL = req.file.path; }
+        
+    const usr = await User.findByIdAndUpdate(_id, {name, avatarURL}, {new: true}); // оновлюємо поле avatarURL для поточного юзера
+    
+    res.json({name, avatarURL });
   }
-
 
 
 //+ надсилання листа з повідомленням про підписку на розсилку
