@@ -20,28 +20,33 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 
 //+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
- const updateUser  = async(req, res) => {
+  const updateUser  = async(req, res) => {
 
     let newUserName, newAvatarURL;
-
-    console.log("Я в updateUser", req.name);
-    console.log("req.name= ", req.name);
-    console.log("req.file= ", req.file);
+    console.log("Я в updateUser" );
 
     const {_id, name: currentUserName} = req.user;                                                  //забираємо поточне ім'я юзера
     const {name} = req.body;                                                                        //забираємо нове ім'я юзера
-    
+
+    console.log("req.name= ", name);
+    console.log("req.file= ", req.body.file);
+
     if (!name) { newUserName = currentUserName}
-    else       { newUserName = name}
+    else { newUserName = name};
     
+    console.log("newUserName = ", newUserName );
+
     if (!req.file)                                                                                  // якщо нового файлу аватара немає, то змінемо лише ім'я юзера
-      {                                                                                              
+      {                                         
+        console.log("req.file віідсутній ");                                                     
         const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});            // оновлюємо ім'я поточного юзера   
         res.json({ name: usr.name});   
       }
     else                                                                                            // якщо є новий файл аватара, то закидуємо йього на claudinary, та оновлюємо name і avatatURL юзера
-      {                                                                                           
+      {
         newAvatarURL = req.file.path;
+
+        console.log("req.file.path =newAvatarURL =", req.file.path);     
 
         cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
           if (error) {   
@@ -57,6 +62,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         res.json({name: usr.name , avatarUrl: usr.avatarURL });
       }                
   }
+
 
 
 //+ надсилання листа з повідомленням про підписку на розсилку
