@@ -24,7 +24,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
     let newUserName, newAvatarURL;
     console.log("Я в updateUser" );
-
+    console.log("req=",req );
     const {_id, name: currentUserName} = req.user;                                                  //забираємо поточне ім'я юзера
     const {name} = req.body;                                                                        //забираємо нове ім'я юзера
 
