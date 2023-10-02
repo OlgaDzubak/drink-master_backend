@@ -129,17 +129,17 @@ const cloudinary = require('cloudinary').v2;
     const getFavoriteDrinks = async (req, res) => {
       const { _id: userId } = req.user;
       const { page, per_page } = req.query;
-      const currentPage = parseInt(page) && 1;
-      const limit = parseInt(per_page) && 10;
-      const skip = (currentPage - 1) * limit;
+    //  const currentPage = parseInt(page) && 1;
+    //  const limit = parseInt(per_page) && 10;
+    //  const skip = (currentPage - 1) * limit;
 
       try {
         const result = await Recipe.find(
           { users: { $in: [userId] } },
           { id: 1, drink: 1, category: 1, alcoholic: 1, glass: 1, description: 1, shortDescription: 1, instructions: 1, drinkThumb: 1, ingredients: 1 }
         )
-          .skip(skip)
-          .limit(limit);
+          // .skip(skip)
+          // .limit(limit);
         res.json(result);
       } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
