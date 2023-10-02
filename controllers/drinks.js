@@ -2,36 +2,37 @@ const { User } = require('../db/models/user');
 const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
 const { mongoose } = require("mongoose");
-const {differenceInYears} = require('date-fns')
+const {differenceInYears} = require('date-fns');
+const cloudinary = require('cloudinary').v2;
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
 
-// контроллери для GET-запитів
+
+// контроллери для GET-запитів----------------------------------------------------------------------------
 
   // + отримання масиву напоїв id для поточного(залогіненого) юзера
-  
-const getDrinksForMainPage = async (req, res) => {
-  const userBirthDate = req.user.birthdate;
-  const currentDate = new Date();
-  const userAge = differenceInYears(currentDate, userBirthDate);
-  const ageFilter = userAge >= 18;
-  const alcoholicFilter = ageFilter ? 'Alcoholic' : 'Non alcoholic';
-  const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown'];
-  const drinksForMainPage = {};
+    const getDrinksForMainPage = async (req, res) => {
+      const userBirthDate = req.user.birthdate;
+      const currentDate = new Date();
+      const userAge = differenceInYears(currentDate, userBirthDate);
+      const ageFilter = userAge >= 18;
+      const alcoholicFilter = ageFilter ? 'Alcoholic' : 'Non alcoholic';
+      const categories = ['Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown'];
+      const drinksForMainPage = {};
 
-  for (const category of categories) {
-    const cocktails = await Recipe.aggregate([
-      { $match: { category, alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic' } },
-      { $sample: { size: 3 } },
-      { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
-    ]);
+      for (const category of categories) {
+        const cocktails = await Recipe.aggregate([
+          { $match: { category, alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic' } },
+          { $sample: { size: 3 } },
+          { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
+        ]);
 
-    drinksForMainPage[category] = cocktails;
-  }
+        drinksForMainPage[category] = cocktails;
+      }
 
-  res.json(drinksForMainPage);
-};
+      res.json(drinksForMainPage);
+    };
 
   //+отримання всіх напоїв поточного(залогіненого) юзера
     const getAllDrinks = async(req, res)=>{ 
@@ -42,9 +43,8 @@ const getDrinksForMainPage = async (req, res) => {
       res.json(result);
     }
     
-
- //+ отримання популярних напоїв:
-  const getPopularDrinks = async (req, res) => {
+  //+ отримання популярних напоїв:
+    const getPopularDrinks = async (req, res) => {
     const userBirthDate = req.user.birthdate;
     const currentDate = new Date();
     const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
@@ -81,7 +81,7 @@ const getDrinksForMainPage = async (req, res) => {
     }
 
   //+ пошук напоїв за категорією + інгредієнтам + ключовим словом
-const searchDrinks = async (req, res) => {
+    const searchDrinks = async (req, res) => {
   try {
     const userBirthDate = req.user.birthdate;
     const currentDate = new Date();
@@ -154,42 +154,50 @@ const searchDrinks = async (req, res) => {
       res.json(result);
     }
 
-// контроллери для POST-запитів
+
+
+
+// контроллери для POST-запитів-----------------------------------------------------------------------------
 
   //+ додавання напою поточним(залогіненим) юзером
-    // const addDrink = async (req, res) => {
-    //   const {_id: owner} = req.user;
-    //   const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
-    //   const drinkThumb = req.file.path;
+    const addDrink = async (req, res) => {
+      
+      let drinkThumb;
 
-    //   // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
-    //   const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
-    //       const _id = new mongoose.Types.ObjectId(ingredientId);
-    //       return {title, measure, ingredientId: _id }; 
-    //     });
+      const {_id: owner} = req.user;
+      const {ingredients} = req.body;  
+      
+      const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
+          const _id = new mongoose.Types.ObjectId(ingredientId);
+          return {title, measure, ingredientId: _id }; 
+        });
 
-    //     const result = await Recipe.create({
-    //           ...req.body,
-    //           ingredients : ingredientsJSON, 
-    //           drinkThumb, 
-    //           owner
-    //         }
-    //       );    
+      if (!req.file) { throw httpError(400, `Drink photo is required`); } 
 
-    //   if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами, схема валідації не пропустить
-    //   res.status(201).json(result);
-    // } 
-        
-   const addDrink = async (req, res) => {
-    console.log(req.user);
-    const {_id: owner} = req.user;
-        
-    const result = await Recipe.create({...req.body, owner});    
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        if (error) {   
+            console.error(error);
+            return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+        }
+        const { secure_url: drinkThumb} = result;               
+      }).end(req.file.buffer);
 
-    if (!result) { throw httpError(400, `Drink with the name '${req.body.drink}' is elready in the list`); } // не можна додавати напої з однаковими назвами
-    res.status(201).json(result);
-  } 
-  
+      const result = await Recipe.create({
+            ...req.body,
+            ingredients : ingredientsJSON, 
+            drinkThumb, 
+            owner
+          }
+      );    
+
+      if (!result) { 
+        throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+      } 
+
+      res.status(201).json(result);
+
+    } 
+ 
 
   //+ додавання напоя в favorits для поточного(залогіненого) юзера
     const addDrinkToFavorite = async (req, res) => {
@@ -221,10 +229,12 @@ const searchDrinks = async (req, res) => {
     }
 
     res.status(201).json(result);
-  }
+    }
 
 
-// контроллери для DELETE-запитів
+
+
+// контроллери для DELETE-запитів------------------------------------------------------------------------
 
   //+ видалення напою поточним(залогіненим) юзером
     const deleteDrinkById = async (req, res) => {
@@ -266,7 +276,7 @@ const searchDrinks = async (req, res) => {
   
 
 
-//---------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------
 
 module.exports = {
   getDrinksForMainPage : ctrlWrapper(getDrinksForMainPage),

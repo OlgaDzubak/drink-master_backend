@@ -14,7 +14,7 @@ router.get('/search', authenticate, ctrl.searchDrinks);                         
 router.get('/favorite', authenticate, ctrl.getFavoriteDrinks);                                  //+
 router.get('/:id', authenticate, validateId, ctrl.getDrinkById);                                //+
 
-router.post('/own/add', authenticate, upload.single("drinkImage"), ctrl.addDrink);              //+
+router.post('/own/add', authenticate, upload.single("drinkThumb"), ctrl.addDrink);              //+
 router.post('/favorite/add/:id', authenticate, validateId,ctrl.addDrinkToFavorite);             //+ !!! СПИТАТИ У МЕНТОРА ЯК ПЕРЕДАВАТИ ID, ЯК ПАРАМЕТР ЧИ В BODY
 
 router.delete('/:id', authenticate, validateId, ctrl.deleteDrinkById);                          //+

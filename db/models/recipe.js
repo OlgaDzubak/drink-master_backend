@@ -251,13 +251,13 @@ const addSchema = joi.object({
     });
     return errors;
         }),
-    drinkThumb : joi.string().error(errors => {
+    drinkThumb : joi.string().required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
-                // case "any.required": 
-                //     err.message = "missing required drinkThumb field (URL of drink photo)";
-                // break;
-                    case "string.empty":
+                case "any.required": 
+                    err.message = "missing required drinkThumb field (URL of drink photo)";
+                    break;
+                case "string.empty":
                                     err.message = "drinkThumb field should not be empty!";
                                     break;
                     default:
