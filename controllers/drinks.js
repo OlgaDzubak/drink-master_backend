@@ -240,8 +240,8 @@ const cloudinary = require('cloudinary').v2;
 
   //+ видалення напою поточним(залогіненим) юзером
     const deleteDrinkById = async (req, res) => {
-      const {id} = req.params;
-      const result = await Recipe.findByIdAndDelete({_id: id});
+      const {_id} = req.params;
+      const result = await Recipe.findByIdAndDelete({_id});
       if (!result) { throw httpError(404, "Not found"); }
       res.json({ message : "drink deleted" });
     } 
