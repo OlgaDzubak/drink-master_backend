@@ -4,28 +4,6 @@ const joi = require("joi");
 
 // ----- СХЕМИ МОДЕЛІ ДАНИХ КОЛЕКЦІЇ "RECIPES" -------------------------------------------------------------------
   
-// схема для поля ingredients
-//   const ingSchema = new Schema(
-//     { 
-//         title: {
-//             type: String,
-//             required: [true, "Set title of ingridients"],
-//         },
-//         measure: {
-//             type: String,
-//             maxlenght: 30,
-//         },
-//         ingredientId : {
-//             type: Schema.Types.ObjectId,
-//             ref: 'Ingridient',
-//             required: [true, "Set id of ingridients"],
-//         },
-//     },
-//     {  
-//         versionKey: false,
-//     }
-//   );
-
   const recipeSchema = new Schema(
     {
         drink:{
@@ -117,7 +95,7 @@ const joi = require("joi");
         drinkThumb:{
             type: String,
             required: [true, 'Set image URL for recipe'],
-            default: "https://res.cloudinary.com/dxvnh0oip/image/upload/v1695433998/drinks/Glass_for_drink_bxguke.png",
+            default: "https://res.cloudinary.com/dxvnh0oip/image/upload/v1696136308/drinks/wineglass_zeyobt.png",
         },
         ingredients:{
             type : Array,    //[ingSchema],  // перевірити
