@@ -23,23 +23,18 @@ const {SECRET_KEY, BASE_URL} = process.env;
   const updateUser  = async(req, res) => {
 
     let newUserName, newAvatarURL;
-    console.log("Я в updateUser" );
-    console.log("req=",req );
+    
     const {_id, name: currentUserName} = req.user;                                                  //забираємо поточне ім'я юзера
     const {name} = req.body;                                                                        //забираємо нове ім'я юзера
-
-    console.log("req.name= ", name);
 
     if (!name) { newUserName = currentUserName}
     else { newUserName = name};
     
-    console.log("newUserName = ", newUserName );
-
     if (!req.file)                                                                                  // якщо нового файлу аватара немає, то змінемо лише ім'я юзера
       {                                         
         console.log("req.file віідсутній ");                                                     
         const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});            // оновлюємо ім'я поточного юзера   
-        res.json({ name: usr.name});   
+        res.json({ name: usr.name, avatarURL: usr.avatarURL});   
       }
     else                                                                                            // якщо є новий файл аватара, то закидуємо йього на claudinary, та оновлюємо name і avatatURL юзера
       {
