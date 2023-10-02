@@ -164,15 +164,17 @@ const cloudinary = require('cloudinary').v2;
       
       let drinkThumb;
 
+      if (!req.file) { throw httpError(400, `Drink photo is required`); } 
+
       const {_id: owner} = req.user;
-      const {ingredients} = req.body;  
-      
-      const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", ingredientId})=>{
-          const _id = new mongoose.Types.ObjectId(ingredientId);
+      const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
+
+      // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+      const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
+          const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
         });
 
-      if (!req.file) { throw httpError(400, `Drink photo is required`); } 
 
       cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
         if (error) {   
