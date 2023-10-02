@@ -32,7 +32,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
     
     if (!req.file)                                                                                  // якщо нового файлу аватара немає, то змінемо лише ім'я юзера
       {                                         
-        console.log("req.file віідсутній ");                                                     
         const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});            // оновлюємо ім'я поточного юзера   
         res.json({ name: usr.name, avatarURL: usr.avatarURL});   
       }
@@ -40,16 +39,14 @@ const {SECRET_KEY, BASE_URL} = process.env;
       {
         newAvatarURL = req.file.path;
 
-        console.log("req.file.path = newAvatarURL =", req.file.path);     
-
-        cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-          if (error) {   
-              console.error(error);
-              return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-          }
-          const { secure_url: newAvatarURL} = result;                                                 // отрисуємо з claudinary новий URL аватара 
+        // cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        //   if (error) {   
+        //       console.error(error);
+        //       return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+        //   }
+        //   const { secure_url: newAvatarURL} = result;                                                 // отрисуємо з claudinary новий URL аватара 
         
-        }).end(req.file.buffer);
+        // }).end(req.file.buffer);
 
         const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поля name та avatarURL для поточного юзера в базі
           
