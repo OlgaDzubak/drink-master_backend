@@ -47,7 +47,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "name": newUser.name,
         "email": newUser.email,
         "avatarURL": newUser.avatarURL,
-        "birthdate": user.birthdate,
+        "birthdate": newUser.birthdate,
       }
     });
     
