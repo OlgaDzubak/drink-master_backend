@@ -5,8 +5,6 @@ const joi = require("joi");
 const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;                     // регулярний вираз для email юзера
 
 const now = new Date();
-const maxValidBirthDate = new Date(now.getFullYear() - 3, now.getMonth(), now.getDay()); // максимальна дозволена дата народження юзера (при реэстрацыъ не можна буде ввести дату старшу за цю)
-
 
 // ----- СХЕМА МОДЕЛІ ДАНИХ КОЛЕКЦІЇ "USERS" ---------------------------------------------------------------------------------
 const userSchema = new Schema(
@@ -31,7 +29,8 @@ const userSchema = new Schema(
         },
         birthdate: {
             type: Date,
-            required: [true, 'Birthdate is required']            
+            required: [true, 'Birthdate is required'],
+            default: now,
         },
         sibscribeStatus: {
             type: Boolean,

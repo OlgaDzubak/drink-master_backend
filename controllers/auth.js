@@ -14,19 +14,23 @@ const {SECRET_KEY, BASE_URL} = process.env;
 // + реєстрація нового користувача
   const signup = async (req, res) => {
 
-    const {email, password} = req.body;
+    const {email, password, birthdate: bd_str} = req.body;
+    
     const user = await User.findOne({email});                                                      // первіряємо в базі чи немає вже такого email, двох однакових бути не може
     if (user) {
       throw httpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);                                          // хешуємо пароль
         
-
-    const newUser = await User.create({...req.body, password: hashPassword});                     // створюємо нового юзера без верифікації email
+    bd_Date = Date.parse(bd_str);
+    
+    const newUser = await User.create({...req.body, password: hashPassword, birthdate: bd_Date});                     // створюємо нового юзера без верифікації email
+    
     const payload = { id: newUser._id };                                                                
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });                            // створюємо токен для того щоб одразу залогінитися 
-    await User.findByIdAndUpdate(newUser._id, { token });                                         // записуємо токен в базу користувачів
-
+    
+    await User.findByIdAndUpdate(newUser._id, { token }, {new: true});                                         // записуємо токен в базу користувачів
+    
     // ----------------------------------------------------------
     // блок з верифікацією email після реєстрації закоментила, що  залогінитися автоматом одазу після реєстрації
     // const verificationToken = v4();                                                                 // створюэмо токен для верифікації emai
@@ -47,7 +51,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "name": newUser.name,
         "email": newUser.email,
         "avatarURL": newUser.avatarURL,
-        "birthdate": user.birthdate,
+        "birthdate": newUser.birthdate,
       }
     });
     
