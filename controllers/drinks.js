@@ -129,8 +129,8 @@ const cloudinary = require('cloudinary').v2;
     const getFavoriteDrinks = async (req, res) => {
       const { _id: userId } = req.user;
       const { page, per_page } = req.query;
-      const currentPage = parseInt(page) || 1;
-      const limit = parseInt(per_page) || 10;
+      const currentPage = parseInt(page) && 1;
+      const limit = parseInt(per_page) && 10;
       const skip = (currentPage - 1) * limit;
 
       try {
