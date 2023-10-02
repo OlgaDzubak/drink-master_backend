@@ -50,7 +50,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
         const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поля name та avatarURL для поточного юзера в базі
           
-        res.json({name: usr.name , avatarUrl: usr.avatarURL });
+        res.json({name: usr.name , avatarURL: usr.avatarURL });
       }                
   }
 
