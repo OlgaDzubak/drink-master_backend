@@ -48,15 +48,11 @@ const joi = require("joi");
         description:{            
             type: String,
             required: [true, 'Set description for recipe'],
-            minlength: 10,
-            maxlenght: 500,
         },
         instructions:{
             type: String,
             required: [true, 'Set instructions for recipe'],
-            minlength: 10,
-            maxlenght: 500,
-        },
+          },
         instructionsES:{
             type: String,
             minlength: 10,
@@ -105,8 +101,6 @@ const joi = require("joi");
         },
         shortDescription:{
             type: String,
-            minlength: 10,
-            maxlenght: 200,
         },
         owner: {
             type: Schema.Types.ObjectId,
@@ -184,12 +178,6 @@ const addSchema = joi.object({
                     case "string.empty":
                                     err.message = "description field should not be empty!";
                                     break;
-                    case "string.min":
-                                    err.message = `description field should have at least ${err.local.limit} characters!`;
-                                    break;
-                    case "string.max":
-                                    err.message = `description field should have ${err.local.limit} characters maximum!`;
-                                    break;
                     default:
                                     break;
                 }
@@ -205,12 +193,6 @@ const addSchema = joi.object({
                                     break;
                     case "string.empty":
                                     err.message = "description field should not be empty!";
-                                    break;
-                    case "string.min":
-                                    err.message = `description field should have at least ${err.local.limit} characters!`;
-                                    break;
-                    case "string.max":
-                                    err.message = `description field should have ${err.local.limit} characters maximum!`;
                                     break;
                     default:
                                     break;
