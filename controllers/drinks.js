@@ -159,46 +159,89 @@ const cloudinary = require('cloudinary').v2;
 
 // контроллери для POST-запитів-----------------------------------------------------------------------------
 
-  //+ додавання напою поточним(залогіненим) юзером
+//+ додавання напою поточним(залогіненим) юзером
     const addDrink = async (req, res) => {
       
-      let drinkThumb;
-
-      if (!req.file) { throw httpError(400, `Drink photo is required`); } 
+      let newDrinkURL;
 
       const {_id: owner} = req.user;
-      const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
-
-      // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+      const {ingredients} = req.body;   
+      
+      if (!req.file) { 
+        throw httpError(400, `Drink photo is required`); 
+      } 
+      else {
+      
+      //парсимо поле ingredients
       const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
           const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
         });
 
-
-      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-        if (error) {   
-            console.error(error);
-            return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-        }
-        const { secure_url: drinkThumb} = result;               
-      }).end(req.file.buffer);
-
-      const result = await Recipe.create({
-            ...req.body,
-            ingredients : ingredientsJSON, 
-            drinkThumb, 
-            owner
-          }
-      );    
-
-      if (!result) { 
+      
+      let newDrink = await Recipe.create({...req.body, owner, ingredients : ingredientsJSON});    
+      if (!newDrink) { 
         throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
       } 
-
-      res.status(201).json(result);
-
+      
+      //завантажуємо картинку на cloudinary
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        if (error) {
+            console.error(error); 
+            return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+        }
+        const { secure_url: newDrinkURL} = result;               
+        
+      }).end(req.file.buffer); 
+      
+      //шукаємо створений напій, та оновлюємо поле drinkThumb
+      newDrink = await Recipe.findByIdAndUpdate(newDrink._id, {drinkThumb: newDrinkURL}, {new: true});
+     
+     
+      res.status(201).json(newDrink); 
+    }
     } 
+
+
+    // const addDrink = async (req, res) => {
+      
+    //   let drinkThumb;
+
+    //   if (!req.file) { throw httpError(400, `Drink photo is required`); } 
+
+    //   const {_id: owner} = req.user;
+    //   const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
+
+    //   // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
+    //   const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
+    //       const _id = new mongoose.Types.ObjectId(ingId);
+    //       return {title, measure, ingredientId: _id }; 
+    //     });
+
+
+    //   cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+    //     if (error) {   
+    //         console.error(error);
+    //         return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+    //     }
+    //     const { secure_url: drinkThumb} = result;               
+    //   }).end(req.file.buffer);
+
+    //   const result = await Recipe.create({
+    //         ...req.body,
+    //         ingredients : ingredientsJSON, 
+    //         drinkThumb, 
+    //         owner
+    //       }
+    //   );    
+
+    //   if (!result) { 
+    //     throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+    //   } 
+
+    //   res.status(201).json(result);
+
+    // } 
  
 
   //+ додавання напоя в favorits для поточного(залогіненого) юзера
