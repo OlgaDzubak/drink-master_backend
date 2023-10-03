@@ -179,26 +179,12 @@ const cloudinary = require('cloudinary').v2;
           return {title, measure, ingredientId: _id }; 
         });
      
-        newDrinkURL=req.file.path;
+      newDrinkURL=req.file.path;
       
       newDrink = await Recipe.create({...req.body, owner, ingredients : ingredientsJSON, drinkThumb: newDrinkURL});    
       if (!newDrink) { 
         throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
       } 
-      newDrinkURL=req.file.path;
-      // //завантажуємо картинку на cloudinary
-      // cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-      //   if (error) {
-      //       console.error(error); 
-      //       return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-      //   }
-      //   const { secure_url: newDrinkURL} = result;               
-        
-      // }).end(req.file.buffer); 
-      
-      //шукаємо створений напій, та оновлюємо поле drinkThumb
-      newDrink = await Recipe.findByIdAndUpdate(newDrink._id, {drinkThumb: newDrinkURL}, {new: true});
-     
      
       res.status(201).json(newDrink); 
     }
