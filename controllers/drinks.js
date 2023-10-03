@@ -163,7 +163,8 @@ const cloudinary = require('cloudinary').v2;
     const addDrink = async (req, res) => {
       
       let newDrinkURL;
-
+      let newDrink;
+      
       const {_id: owner} = req.user;
       const {ingredients} = req.body;   
       
@@ -177,22 +178,23 @@ const cloudinary = require('cloudinary').v2;
           const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
         });
-
+     
+        newDrinkURL=req.file.path;
       
-      let newDrink = await Recipe.create({...req.body, owner, ingredients : ingredientsJSON});    
+      newDrink = await Recipe.create({...req.body, owner, ingredients : ingredientsJSON, drinkThumb: newDrinkURL});    
       if (!newDrink) { 
         throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
       } 
-      
-      //завантажуємо картинку на cloudinary
-      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-        if (error) {
-            console.error(error); 
-            return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-        }
-        const { secure_url: newDrinkURL} = result;               
+      newDrinkURL=req.file.path;
+      // //завантажуємо картинку на cloudinary
+      // cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+      //   if (error) {
+      //       console.error(error); 
+      //       return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+      //   }
+      //   const { secure_url: newDrinkURL} = result;               
         
-      }).end(req.file.buffer); 
+      // }).end(req.file.buffer); 
       
       //шукаємо створений напій, та оновлюємо поле drinkThumb
       newDrink = await Recipe.findByIdAndUpdate(newDrink._id, {drinkThumb: newDrinkURL}, {new: true});
