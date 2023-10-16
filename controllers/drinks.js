@@ -11,7 +11,7 @@ const cloudinary = require('cloudinary').v2;
 
 // контроллери для GET-запитів----------------------------------------------------------------------------
 
-  // + отримання масиву напоїв id для поточного(залогіненого) юзера
+  // отримання масиву напоїв id для поточного(залогіненого) юзера
     const getDrinksForMainPage = async (req, res) => {
       const userBirthDate = req.user.birthdate;
       const currentDate = new Date();
@@ -34,7 +34,7 @@ const cloudinary = require('cloudinary').v2;
       res.json(drinksForMainPage);
     };
 
-  //+отримання всіх напоїв поточного(залогіненого) юзера
+  // отримання всіх напоїв поточного(залогіненого) юзера
     const getAllDrinks = async(req, res)=>{ 
       console.log("req.user=", req.user);
       const {id: owner} = req.user;
@@ -43,7 +43,7 @@ const cloudinary = require('cloudinary').v2;
       res.json(result);
     }
     
-  //+ отримання популярних напоїв:
+  // отримання популярних напоїв:
     const getPopularDrinks = async (req, res) => {
     const userBirthDate = req.user.birthdate;
     const currentDate = new Date();
@@ -80,7 +80,7 @@ const cloudinary = require('cloudinary').v2;
         }
     }
 
-  //+ пошук напоїв за категорією + інгредієнтам + ключовим словом
+  // пошук напоїв за категорією + інгредієнтам + ключовим словом
     const searchDrinks = async (req, res) => {
   try {
     const userBirthDate = req.user.birthdate;
@@ -125,7 +125,7 @@ const cloudinary = require('cloudinary').v2;
     };
 
 
-  //+ отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
+  // отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
     const getFavoriteDrinks = async (req, res) => {
       const { _id: userId } = req.user;
       const { page, per_page } = req.query;
@@ -146,7 +146,7 @@ const cloudinary = require('cloudinary').v2;
       }
     };
 
-  //+ отримання напою за йього _id для поточного(залогіненого) юзера
+  // отримання напою за йього _id для поточного(залогіненого) юзера
     const getDrinkById = async (req, res) => {
       const {id} = req.params;
       const result = await Recipe.findById(id, {drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
@@ -159,7 +159,7 @@ const cloudinary = require('cloudinary').v2;
 
 // контроллери для POST-запитів-----------------------------------------------------------------------------
 
-//+ додавання напою поточним(залогіненим) юзером
+// додавання напою поточним(залогіненим) юзером
     const addDrink = async (req, res) => {
       
       let newDrinkURL;
@@ -191,48 +191,7 @@ const cloudinary = require('cloudinary').v2;
     } 
 
 
-    // const addDrink = async (req, res) => {
-      
-    //   let drinkThumb;
-
-    //   if (!req.file) { throw httpError(400, `Drink photo is required`); } 
-
-    //   const {_id: owner} = req.user;
-    //   const {ingredients} = req.body;    //забираємо з body строку ingredients, тому що нам треба її распарсити у JSON-формат, та фотку напоя
-
-    //   // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
-    //   const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
-    //       const _id = new mongoose.Types.ObjectId(ingId);
-    //       return {title, measure, ingredientId: _id }; 
-    //     });
-
-
-    //   cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-    //     if (error) {   
-    //         console.error(error);
-    //         return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-    //     }
-    //     const { secure_url: drinkThumb} = result;               
-    //   }).end(req.file.buffer);
-
-    //   const result = await Recipe.create({
-    //         ...req.body,
-    //         ingredients : ingredientsJSON, 
-    //         drinkThumb, 
-    //         owner
-    //       }
-    //   );    
-
-    //   if (!result) { 
-    //     throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
-    //   } 
-
-    //   res.status(201).json(result);
-
-    // } 
- 
-
-  //+ додавання напоя в favorits для поточного(залогіненого) юзера
+  // додавання напоя в favorits для поточного(залогіненого) юзера
     const addDrinkToFavorite = async (req, res) => {
     const { id } = req.params;     // забираємо з body id паною  
     const { _id: userId } = req.user;
@@ -269,7 +228,7 @@ const cloudinary = require('cloudinary').v2;
 
 // контроллери для DELETE-запитів------------------------------------------------------------------------
 
-  //+ видалення напою поточним(залогіненим) юзером
+  // видалення напою поточним(залогіненим) юзером
     const deleteDrinkById = async (req, res) => {
       const {id: RemovedDrink_id} = req.params;
       const result = await Recipe.findByIdAndDelete({_id : RemovedDrink_id});
@@ -277,7 +236,7 @@ const cloudinary = require('cloudinary').v2;
       res.json({ message : "drink deleted" });
     } 
       
-  //+ видалення напоя із favorits для поточного(залогіненого) юзера
+  // видалення напоя із favorits для поточного(залогіненого) юзера
     const removeDrinkFromFavorite = async (req, res) => {
         const { id } = req.params;
         const { _id: userId } = req.user;
