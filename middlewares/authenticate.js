@@ -23,11 +23,9 @@ const authenticate = async (req, res, next) => {
             if (!user || !user.token || user.token != token ){
                 next(httpError(401, "Not authorized"));
             }
+            
             req.user = user;
-
             const {_id, email, name, avatarURL, birthdate} = req.user;
-            console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name, avatarURL, birthdate});
-
             next();
         }
     catch(error)
