@@ -12,14 +12,14 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
 
-//+ поверення поточного користувача
+// поверення поточного користувача
   const getCurrent = async(req, res) => {
     const {id, name, email, avatarURL} = req.user;
     res.status(200).json({id, name, email, avatarURL});
   }
 
 
-//+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
+// оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   const updateUser  = async(req, res) => {
 
     let newUserName, newAvatarURL;
@@ -45,7 +45,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 
 
-//+ надсилання листа з повідомленням про підписку на розсилку
+// надсилання листа з повідомленням про підписку на розсилку
   const subscribe = async(req, res) => {
       const {email, name} = req.user;
        
