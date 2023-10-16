@@ -19,12 +19,12 @@ const ingredientSchema = new Schema(
     },
     thumb_medium:{
       type: String,
-      required: [true, 'Set thumb_medium for ingridient'],  //??? required чи ні
+      required: [true, 'Set thumb_medium for ingridient'],
       default: "https://res.cloudinary.com/dxvnh0oip/image/upload/v1696253875/drinks/image_tb2u5z.png",
     },
     thumb_small:{
       type: String,
-      required: [true, 'Set thumb_small for ingridient'],  //??? required чи ні
+      required: [true, 'Set thumb_small for ingridient'],
       default: 'https://res.cloudinary.com/dxvnh0oip/image/upload/v1696253875/drinks/unsplash_J9lD6FS6_cs_pvesaq.png',
     },
     abv:{
