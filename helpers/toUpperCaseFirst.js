@@ -6,7 +6,6 @@ const toUpperCaseFirst = (str) => {
         item[0].toUpperCase();
         return item;
     });
-    console.log("str", str);
     return str;
 }
 
