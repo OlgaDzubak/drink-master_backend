@@ -11,7 +11,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для реєстрації, авторизації, розаавторизації) ----------------------------
 
-// + реєстрація нового користувача
+// реєстрація нового користувача
   const signup = async (req, res) => {
 
     const {email, password, birthdate: bd_str} = req.body;
@@ -57,7 +57,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     
   }
 
-// + верифікація електронної пошти юзера  
+// верифікація електронної пошти юзера  
   const verifyEmail = async(req, res) => {
   const {verificationToken} = req.params;
 
@@ -69,7 +69,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   res.json({message: "Verification successful"})
   }
 
-// + повторная верифікація електроної пошти користувача
+// повторная верифікація електроної пошти користувача
   const resendVerifyEmail = async(req, res) => {
     const {email} = req.body;
 
@@ -90,7 +90,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   }
 
 
-// + авторизація користувача
+// авторизація користувача
   const signin = async (req, res) => {
     const {email, password} = req.body;
     
@@ -121,7 +121,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   }
 
   
-// + розавторизація користувача
+// розавторизація користувача
   const signout = async (req, res) => {
     const {_id} = req.user;
     const user = await User.findByIdAndUpdate(_id, {token: ""});
