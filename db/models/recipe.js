@@ -94,7 +94,7 @@ const joi = require("joi");
             default: "https://res.cloudinary.com/dxvnh0oip/image/upload/v1696136308/drinks/wineglass_zeyobt.png",
         },
         ingredients:{
-            type : Array,    //[ingSchema],  // перевірити
+            type : Array,
             required: [true, 'Set ingredients for recipe'],
             minlength: 1,
             default: undefined,
