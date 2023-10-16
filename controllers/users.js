@@ -18,7 +18,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
     res.status(200).json({id, name, email, avatarURL});
   }
 
-
 // оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   const updateUser  = async(req, res) => {
 
@@ -42,8 +41,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
         res.json({name: usr.name , avatarURL: usr.avatarURL });
       }                
   }
-
-
 
 // надсилання листа з повідомленням про підписку на розсилку
   const subscribe = async(req, res) => {
@@ -69,8 +66,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
       res.json( { message: `Subscribtion successful. Letters about subscribtion was sent to your email ${email}` } );
 
   }
-
-
 
 //---------------------------------------------------------------------------------------------------------
 
