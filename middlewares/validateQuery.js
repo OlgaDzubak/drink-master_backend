@@ -1,5 +1,4 @@
 const { httpError } = require('../helpers');
-
   
 const validateQuery = (schema) => {
     const func = (req, res, next) => {
