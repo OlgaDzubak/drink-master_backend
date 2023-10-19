@@ -55,7 +55,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
                 <p  style="font-size: 16px"> You will recieve letters about our news and special offers, etc. </p>
                 <p  style="font-size: 16px"> Thank you! </p>
 
-                <p  style="font-size: 14px"> Visit out site! 
+                <p  style="font-size: 14px"> Visit our site! 
                   <a target="_blank" href="https://dimachernyaev.github.io/drinkMaster-Team-1" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
                 </p>`
       };
