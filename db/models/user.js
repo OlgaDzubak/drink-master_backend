@@ -1,6 +1,10 @@
 const { Schema, model } = require("mongoose"); 
-const joi = require("joi");
+import DateExtension from '@joi/date';
+import JoiImport from 'joi';
+const joi = JoiImport.extend(DateExtension);
 
+
+//const joi = require("joi");
 
 const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -129,11 +133,11 @@ const signUpSchema = joi.object({
             });
             return errors;
         }),
-    birthdate: joi.date().format('DD/MM/YYYY').required().error(errors => {
+    birthdate: joi.date().format('dd/mm/yyyy').required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                 case "date.format":
-                                err.message = "wrong birthdate format. Format DD/MM/YYY is required";
+                                err.message = "wrong birthdate format. Format DD/MM/YYYY is required";
                                 break;
                 case "any.required": 
                                 err.message = "missing required birthdate field";
