@@ -9,9 +9,6 @@ const cloudinary = require('cloudinary').v2;
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
 
 
-// контроллери для GET-запитів----------------------------------------------------------------------------
-
-  // + отримання масиву напоїв id для поточного(залогіненого) юзера
     const getDrinksForMainPage = async (req, res) => {
       const userBirthDate = req.user.birthdate;
       const currentDate = new Date();
@@ -34,7 +31,6 @@ const cloudinary = require('cloudinary').v2;
       res.json(drinksForMainPage);
     };
 
-  //+отримання всіх напоїв поточного(залогіненого) юзера
     const getAllDrinks = async(req, res)=>{ 
       console.log("req.user=", req.user);
       const {id: owner} = req.user;
@@ -43,7 +39,6 @@ const cloudinary = require('cloudinary').v2;
       res.json(result);
     }
     
-  //+ отримання популярних напоїв:
     const getPopularDrinks = async (req, res) => {
     const userBirthDate = req.user.birthdate;
     const currentDate = new Date();
@@ -80,7 +75,6 @@ const cloudinary = require('cloudinary').v2;
         }
     }
 
-  //+ пошук напоїв за категорією + інгредієнтам + ключовим словом
     const searchDrinks = async (req, res) => {
   try {
     const userBirthDate = req.user.birthdate;
@@ -124,8 +118,6 @@ const cloudinary = require('cloudinary').v2;
       }
     };
 
-
-  //+ отримання всіх напоїв поточного(залогіненого) юзера, які додані у favorits
     const getFavoriteDrinks = async (req, res) => {
       const { _id: userId } = req.user;
       const { page, per_page } = req.query;
@@ -146,20 +138,14 @@ const cloudinary = require('cloudinary').v2;
       }
     };
 
-  //+ отримання напою за йього _id для поточного(залогіненого) юзера
     const getDrinkById = async (req, res) => {
       const {id} = req.params;
+      console.log(id, typeof(id));
       const result = await Recipe.findById(id, {drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
       if (!result) { throw httpError(404, "Not found"); }
       res.json(result);
     }
 
-
-
-
-// контроллери для POST-запитів-----------------------------------------------------------------------------
-
-  //+ додавання напою поточним(залогіненим) юзером
     const addDrink = async (req, res) => {
       
       let drinkThumb;
@@ -199,9 +185,7 @@ const cloudinary = require('cloudinary').v2;
       res.status(201).json(result);
 
     } 
- 
 
-  //+ додавання напоя в favorits для поточного(залогіненого) юзера
     const addDrinkToFavorite = async (req, res) => {
     const { id } = req.params;     // забираємо з body id паною  
     const { _id: userId } = req.user;
@@ -233,20 +217,13 @@ const cloudinary = require('cloudinary').v2;
     res.status(201).json(result);
     }
 
-
-
-
-// контроллери для DELETE-запитів------------------------------------------------------------------------
-
-  //+ видалення напою поточним(залогіненим) юзером
     const deleteDrinkById = async (req, res) => {
       const {id: RemovedDrink_id} = req.params;
       const result = await Recipe.findByIdAndDelete({_id : RemovedDrink_id});
       if (!result) { throw httpError(404, "Not found"); }
       res.json({ message : "drink deleted" });
     } 
-      
-  //+ видалення напоя із favorits для поточного(залогіненого) юзера
+
     const removeDrinkFromFavorite = async (req, res) => {
         const { id } = req.params;
         const { _id: userId } = req.user;

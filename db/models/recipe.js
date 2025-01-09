@@ -125,18 +125,13 @@ const joi = require("joi");
     }
   );
 
-  const Recipe = model('Recipe', recipeSchema);   // створюємо модель Recipe
+  const Recipe = model('Recipe', recipeSchema);
 
 
 
 // ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту КОЛЕКЦІЇ "RECIPES"-----------------------------------------------------------
 
-const getSchema = joi.object({
-
-});
-
 const addSchema = joi.object({
-    //назва напою
     drink : joi.string().required().min(2).max(50).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -158,7 +153,6 @@ const addSchema = joi.object({
         });
         return errors;
         }),
-    //категорыя напою
     category : joi.string().required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -174,7 +168,6 @@ const addSchema = joi.object({
         });
         return errors;
         }),    
-    //опис напою
     description : joi.string().required().min(10).max(500).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -196,7 +189,6 @@ const addSchema = joi.object({
         });
         return errors;
         }),
-    //інструкція приготування
     instructions : joi.string().required().min(10).max(500).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -218,7 +210,6 @@ const addSchema = joi.object({
         });
         return errors;
         }),
-    //поле алкогольний або безалкогольний
     alcoholic : joi.string().required().valid("Alcoholic","Non alcoholic").error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -237,7 +228,6 @@ const addSchema = joi.object({
         });
         return errors;
         }),
-    //поле glass-тип эмності для напою
     glass : joi.string().required().error(errors => {
     errors.forEach(err => {
         switch (err.code) {
@@ -266,7 +256,6 @@ const addSchema = joi.object({
         });
         return errors;
         }), 
-    //масив інгрідієнтів для приготування
     ingredients : joi.array().required().min(1).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
@@ -284,7 +273,6 @@ const addSchema = joi.object({
 
 
 const schemas = {
-  getSchema,
   addSchema,
 }
 

@@ -1,41 +1,38 @@
 const {User} = require("../db/models/user");
-const { httpError, ctrlWrapper, sendEmail } = require('../helpers');
+const {ctrlWrapper, sendEmail } = require('../helpers');
+const {v4} = require('uuid');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const {v4} = require('uuid');
 const path = require("path");
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
-
 const {SECRET_KEY, BASE_URL} = process.env;
+
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
 
-//+ поверення поточного користувача
   const getCurrent = async(req, res) => {
     const {id, name, email, avatarURL} = req.user;
     res.status(200).json({id, name, email, avatarURL});
   }
 
-
-//+ оновлення даних про поточного користувача (можемо оновити або аватар, або ім'я юзера - user profile window)
   const updateUser  = async(req, res) => {
 
     let newUserName, newAvatarURL;
     
-    const {_id, name: currentUserName} = req.user;                                                  //забираємо поточне ім'я юзера
-    const {name} = req.body;                                                                        //забираємо нове ім'я юзера
+    const {_id, name: currentUserName} = req.user;
+    const {name} = req.body;
 
     if (!name) { newUserName = currentUserName}
     else { newUserName = name};
     
-    if (!req.file)                                                                                  // якщо нового файлу аватара немає, то змінемо лише ім'я юзера
+    if (!req.file)
       {                                         
-        const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});            // оновлюємо ім'я поточного юзера   
+        const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});
         res.json({ name: usr.name, avatarURL: usr.avatarURL});   
       }
-    else                                                                                            // якщо є новий файл аватара, то закидуємо йього на claudinary, та оновлюємо name і avatatURL юзера
+    else
       {
         
         newAvatarURL = req.file.path;
@@ -45,19 +42,16 @@ const {SECRET_KEY, BASE_URL} = process.env;
               console.error(error);
               return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
           }
-          const { secure_url: newAvatarURL} = result;                                                 // отрисуємо з claudinary новий URL аватара 
+          const { secure_url: newAvatarURL} = result;
         
         }).end(req.file.buffer);
 
-        const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true}); // оновлюємо поля name та avatarURL для поточного юзера в базі
+        const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true});
           
         res.json({name: usr.name , avatarURL: usr.avatarURL });
       }                
   }
 
-
-
-//+ надсилання листа з повідомленням про підписку на розсилку
   const subscribe = async(req, res) => {
       const {email, name} = req.user;
        
@@ -70,7 +64,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
                 <p  style="font-size: 16px"> You will recieve letters about our news and special offers, etc. </p>
                 <p  style="font-size: 16px"> Thank you! </p>
 
-                <p  style="font-size: 14px"> Visit out site! 
+                <p  style="font-size: 14px"> Visit our site! 
                   <a target="_blank" href="https://dimachernyaev.github.io/drinkMaster-Team-1" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
                 </p>`
       };
@@ -82,9 +76,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
   }
 
-
-
-//---------------------------------------------------------------------------------------------------------
 
 module.exports = {
   getCurrent: ctrlWrapper(getCurrent),

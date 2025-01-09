@@ -2,12 +2,12 @@
 
 const toUpperCaseFirst = (str) => {
     
-    str.trim().split(" ").map((item)=>{
+    const newStr = str.trim().split(" ").map((item)=>{
         item[0].toUpperCase();
         return item;
     });
-    console.log("str", str);
-    return str;
+
+    return newStr;
 }
 
 module.exports = toUpperCaseFirst;

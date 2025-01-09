@@ -1,11 +1,10 @@
 const { httpError } = require('../helpers');
-const jwt = require("jsonwebtoken");
 const {User} = require("../db/models/user");
+const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
 const {SECRET_KEY} = process.env;
 
-// middleware <authenticate> для перевірки токена
 const authenticate = async (req, res, next) => {
     
     const {authorization = ""} = req.headers;
@@ -24,17 +23,12 @@ const authenticate = async (req, res, next) => {
                 next(httpError(401, "Not authorized"));
             }
             req.user = user;
-
-            const {_id, email, name, avatarURL, birthdate} = req.user;
-            console.log("Аuthentication is succesfull. Current user=", {_id:id, email, name, avatarURL, birthdate});
-
             next();
         }
     catch(error)
         {
             next(httpError(401, "Not authorized"));
         }
-        
 }
 
 module.exports = authenticate;

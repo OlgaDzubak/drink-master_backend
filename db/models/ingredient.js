@@ -64,7 +64,7 @@ const ingredientSchema = new Schema(
       timestamps: true,
   }
 );
-const Ingredient = model('Ingridient', ingredientSchema);   // створюємо модель Ingridient
+const Ingredient = model('Ingridient', ingredientSchema);
 
 
 // ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту ДО КОЛЕКЦІЇ "INGRIDIENTS"-----------------------------------------------------------

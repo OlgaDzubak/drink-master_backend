@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 const joi = require("joi");
 
 
-const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;                     // регулярний вираз для email юзера
+const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const now = new Date();
 
@@ -65,7 +65,7 @@ const userSchema = new Schema(
     } 
 );
 
-const User = model('User', userSchema);    // створюємо модель User
+const User = model('User', userSchema);
 
 
 
