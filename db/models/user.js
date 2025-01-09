@@ -132,7 +132,7 @@ const signUpSchema = joi.object({
     birthdate: joi.date().format('DD/MM/YYYY').required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
-                case "any.format":
+                case "date.format":
                                 err.message = "wrong birthdate format. Format DD/MM/YYY is required";
                                 break;
                 case "any.required": 
