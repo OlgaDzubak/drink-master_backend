@@ -129,15 +129,18 @@ const signUpSchema = joi.object({
             });
             return errors;
         }),
-    birthdate: joi.date().required().error(errors => {
+    birthdate: joi.date().format('DD/MM/YYYY').required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
+                case "any.format":
+                                err.message = "wrong birthdate format. Format DD/MM/YYY is required";
+                                break;
                 case "any.required": 
                                 err.message = "missing required birthdate field";
                                 break;
                 default:
                                 break;
-                }
+            }
         });
         return errors; 
     }),
