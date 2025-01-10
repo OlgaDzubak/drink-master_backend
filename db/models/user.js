@@ -1,7 +1,5 @@
 const { Schema, model } = require("mongoose"); 
-import DateExtension from '@joi/date';
-import JoiImport from 'joi';
-const joi = JoiImport.extend(DateExtension);
+const Joi = require('joi').extend(require('@joi/date'));
 
 
 //const joi = require("joi");
@@ -75,8 +73,8 @@ const User = model('User', userSchema);
 
 
 // ----- СХЕМИ ВАЛІДАЦІЇ ДАНИХ В ТІЛІ HTTP-запиту ДО КОЛЕКЦІЇ USERS (кастомні повідомлення про помилки)----------------------------
-const signUpSchema = joi.object({
-    name : joi.string().required().min(2).max(30).error(errors => {
+const signUpSchema = Joi.object({
+    name : Joi.string().required().min(2).max(30).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                     case "any.required": 
@@ -97,7 +95,7 @@ const signUpSchema = joi.object({
         });
         return errors;
         }),
-    password: joi.string().required().min(6).error(errors => {
+    password: Joi.string().required().min(6).error(errors => {
             errors.forEach(err => {
                 switch (err.code) {
                     case "any.required": 
@@ -115,7 +113,7 @@ const signUpSchema = joi.object({
             });
             return errors;
         }),
-    email: joi.string().pattern(emailRegExp).required().error(errors => {
+    email: Joi.string().pattern(emailRegExp).required().error(errors => {
             errors.forEach(err => {
                 switch (err.code) {
                     case "any.required": 
@@ -133,7 +131,7 @@ const signUpSchema = joi.object({
             });
             return errors;
         }),
-    birthdate: joi.date().format('dd/mm/yyyy').required().error(errors => {
+    birthdate: Joi.date().format('DD/MM/YYYY').required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                 case "date.format":
@@ -150,8 +148,8 @@ const signUpSchema = joi.object({
     }),
 });
 
-const signInSchema = joi.object({
-    email: joi.string().pattern(emailRegExp).required().error(errors => {
+const signInSchema = Joi.object({
+    email: Joi.string().pattern(emailRegExp).required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                 case "any.required": 
@@ -169,7 +167,7 @@ const signInSchema = joi.object({
         });
         return errors;
         }),
-    password: joi.string().required().min(6).error(errors => {
+    password: Joi.string().required().min(6).error(errors => {
             errors.forEach(err => {
                 switch (err.code) {
                     case "any.required": 
@@ -189,8 +187,8 @@ const signInSchema = joi.object({
         }),
 });
 
-const updateSchema = joi.object({
-    name : joi.string().min(2).max(30).error(errors => {
+const updateSchema = Joi.object({
+    name : Joi.string().min(2).max(30).error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                     case "string.empty":
@@ -211,8 +209,8 @@ const updateSchema = joi.object({
 
 })
 
-const emailSchema = joi.object({
-    email: joi.string().pattern(emailRegExp).required().error(errors => {
+const emailSchema = Joi.object({
+    email: Joi.string().pattern(emailRegExp).required().error(errors => {
             errors.forEach(err => {
                 switch (err.code) {
                     case "any.required": 
