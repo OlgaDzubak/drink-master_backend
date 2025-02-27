@@ -131,11 +131,11 @@ const signUpSchema = Joi.object({
             });
             return errors;
         }),
-    birthdate: Joi.date().format('DD/MM/YYYY').required().error(errors => {
+    birthdate: Joi.date().format('MM/DD/YYYY').required().error(errors => {
         errors.forEach(err => {
             switch (err.code) {
                 case "date.format":
-                                err.message = "wrong birthdate format. Format DD/MM/YYYY is required";
+                                err.message = "wrong birthdate format. Format MM/DD/YYYY is required";
                                 break;
                 case "any.required": 
                                 err.message = "missing required birthdate field";
