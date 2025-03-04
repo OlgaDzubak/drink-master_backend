@@ -27,7 +27,7 @@ const cloudinary = require('cloudinary').v2;
       for (const category of categories) {
         const cocktails = await Recipe.aggregate([
           { $match: { category, alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic' } },
-          { $sample: { size: per_page } },
+          { $sample: { size: parseInt(per_page) } },
           { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
         ]);
 
