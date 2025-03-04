@@ -12,7 +12,10 @@ const cloudinary = require('cloudinary').v2;
     const getDrinksForMainPage = async (req, res) => {
 
       const { per_page } = req.query;
-      const userBirthDate = req.user.birthdate;
+      console.log(per_page);
+      console.log(typeof per_page);
+      
+        const userBirthDate = req.user.birthdate;
       const currentDate = new Date();
       const userAge = differenceInYears(currentDate, userBirthDate);
       const ageFilter = userAge >= 18;
