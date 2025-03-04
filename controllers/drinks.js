@@ -10,6 +10,8 @@ const cloudinary = require('cloudinary').v2;
 
 
     const getDrinksForMainPage = async (req, res) => {
+
+      const { per_page } = req.query;
       const userBirthDate = req.user.birthdate;
       const currentDate = new Date();
       const userAge = differenceInYears(currentDate, userBirthDate);
@@ -21,7 +23,7 @@ const cloudinary = require('cloudinary').v2;
       for (const category of categories) {
         const cocktails = await Recipe.aggregate([
           { $match: { category, alcoholic: ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic' } },
-          { $sample: { size: 3 } },
+          { $sample: { size: per_page } },
           { $project: { _id: 1, drink: 1, drinkThumb: 1, alcoholic: 1 } }
         ]);
 
