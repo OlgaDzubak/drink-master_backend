@@ -169,7 +169,8 @@ const cloudinary = require('cloudinary').v2;
           return {title, measure, ingredientId: _id }; 
         });
 
-
+      console.log('ingredientsJSON = ',ingredientsJSON);
+        
       cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
         if (error) {   
             console.error(error);
