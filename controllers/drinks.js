@@ -161,16 +161,11 @@ const cloudinary = require('cloudinary').v2;
       const {_id: owner} = req.user;
       const {ingredients} = req.body;
     
-       console.log('req.body = ',req.body);
-        
-      // !!!!перевірити чи правильно розпарсюэться ingredients, в якому вигляді воно прийде з фронтенду
       const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
           const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
         });
 
-      console.log('ingredientsJSON = ',ingredientsJSON);
-        
       cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
         if (error) {   
             console.error(error);
@@ -178,7 +173,9 @@ const cloudinary = require('cloudinary').v2;
         }
         const { secure_url: drinkThumb} = result;               
       }).end(req.file.buffer);
-
+      
+      console.log(drinkThumb);
+      
       const result = await Recipe.create({
             ...req.body,
             ingredients : ingredientsJSON, 
