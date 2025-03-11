@@ -155,7 +155,9 @@ const cloudinary = require('cloudinary').v2;
     const addDrink = async (req, res) => {
       
       let drinkThumb;
-
+      
+      console.log('req.file=', req.file.path);
+        
       if (!req.file) { throw httpError(400, `Drink photo is required`); } 
 
       const {_id: owner} = req.user;
@@ -166,15 +168,15 @@ const cloudinary = require('cloudinary').v2;
           return {title, measure, ingredientId: _id }; 
         });
 
-      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-        if (error) {   
-            console.error(error);
-            return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-        }
-        const { secure_url: drinkThumb} = result;               
-      }).end(req.file.buffer);
+      // cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+      //   if (error) {   
+      //       console.error(error);
+      //       return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
+      //   }
+      //   const { secure_url: drinkThumb} = result;               
+      // }).end(req.file.buffer);
       
-      console.log(drinkThumb);
+      console.log('drinkThumb=',drinkThumb);
       
       const result = await Recipe.create({
             ...req.body,
