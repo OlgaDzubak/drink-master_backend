@@ -154,30 +154,23 @@ const cloudinary = require('cloudinary').v2;
 
     const addDrink = async (req, res) => {
       
-      let drinkThumb;
-      
-      console.log('req.file=', req.file.path);
-        
-      if (!req.file) { throw httpError(400, `Drink photo is required`); } 
+if (req.fileValidationError){
+        throw httpError(500, "Wrong file format.");
+      }
+
+      if (!req.file) { 
+        throw httpError(400, `Drink photo is required`); 
+      } 
 
       const {_id: owner} = req.user;
       const {ingredients} = req.body;
-    
+      const drinkThumb = req.file.path;
+      
       const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
           const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
-        });
+      });
 
-      // cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-      //   if (error) {   
-      //       console.error(error);
-      //       return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-      //   }
-      //   const { secure_url: drinkThumb} = result;               
-      // }).end(req.file.buffer);
-      
-      console.log('drinkThumb=',drinkThumb);
-      
       const result = await Recipe.create({
             ...req.body,
             ingredients : ingredientsJSON, 
@@ -187,10 +180,11 @@ const cloudinary = require('cloudinary').v2;
       );    
 
       if (!result) { 
-        throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`); // не можна додавати напої з однаковими назвами, схема валідації не пропустить
+        throw httpError(400, `Error! Drink with the name '${req.body.drink}' is elready in the list`);
       } 
 
       res.status(201).json(result);
+
 
     } 
 
