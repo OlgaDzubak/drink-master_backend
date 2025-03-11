@@ -173,7 +173,7 @@ const cloudinary = require('cloudinary').v2;
       
       console.log("drink = ",drink);
 
-      if (!drink) {
+      if (drink) {
         throw httpError(409, `Drink with name ${req.body.drink} is already exist!`);
       }
 
