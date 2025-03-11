@@ -21,9 +21,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     }
     const hashPassword = await bcrypt.hash(password, 10);
         
-    console.log("bd_str = ", bd_str);
     bd_Date = Date.parse(bd_str);
-    console.log("bd_Date = ", bd_Date);
 
     const newUser = await User.create({...req.body, password: hashPassword, birthdate: bd_Date});
     
