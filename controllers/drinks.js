@@ -162,8 +162,6 @@ const cloudinary = require('cloudinary').v2;
       const {ingredients} = req.body;
       const drinkThumb = req.file.path;
       
-      console.log("req.body = ", req.body);
-
       const ingredientsJSON =  JSON.parse(ingredients).map(({title, measure="", _id: ingId})=>{
           const _id = new mongoose.Types.ObjectId(ingId);
           return {title, measure, ingredientId: _id }; 
@@ -171,8 +169,6 @@ const cloudinary = require('cloudinary').v2;
 
       const drink = await Recipe.findOne({drink: req.body.drink});
       
-      console.log("drink = ",drink);
-
       if (drink) {
         throw httpError(409, `Drink with name ${req.body.drink} is already exist!`);
       }
