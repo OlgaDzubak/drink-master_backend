@@ -219,7 +219,7 @@ const cloudinary = require('cloudinary').v2;
       const {id: RemovedDrink_id} = req.params;
       const result = await Recipe.findByIdAndDelete({_id : RemovedDrink_id});
       if (!result) { throw httpError(404, "Not found"); }
-      res.json({ message : "drink deleted" });
+      res.json({_id: RemovedDrink_id, message : "drink deleted" });
     } 
 
     const removeDrinkFromFavorite = async (req, res) => {
