@@ -37,7 +37,7 @@ const cloudinary = require('cloudinary').v2;
       console.log("req.user=", req.user);
       const {id: owner} = req.user;
       const filter = {owner};
-      const result = await Recipe.find(filter, {id:1, drink:1, category:1, alcoholic:1, glass:1, description:1, instructions:1, drinkThumb:1, ingredients:1});
+      const result = await Recipe.find(filter, {id:1, drink:1, category:1, alcoholic:1, glass:1, description:1, shortDescription:1, instructions:1, drinkThumb:1, ingredients:1});
       res.json(result);
     }
     
