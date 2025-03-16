@@ -5,7 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const path = require("path");
 const fs = require("fs").promises;
+const gravatar = require("gravatar");
 require('dotenv').config();
+
 
 const {SECRET_KEY, BASE_URL} = process.env; 
 
@@ -20,10 +22,13 @@ const {SECRET_KEY, BASE_URL} = process.env;
       throw httpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);
-        
-    bd_Date = Date.parse(bd_str);
-
-    const newUser = await User.create({...req.body, password: hashPassword, birthdate: bd_Date});
+    const bd_Date = Date.parse(bd_str);
+    const avatarURL = gravatar.url(email);
+    
+    const newUser = await User.create({ ...req.body, 
+                                        password: hashPassword, 
+                                        birthdate: bd_Date, 
+                                        avatarURL});
     
     const payload = { id: newUser._id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
@@ -54,35 +59,6 @@ const {SECRET_KEY, BASE_URL} = process.env;
       }
     });
     
-  }
-
-  const verifyEmail = async(req, res) => {
-  const {verificationToken} = req.params;
-
-  const user = await User.findOne({verificationToken});
-  if (!user) { throw httpError(404, "User not found"); }
-
-  await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: ""});
-
-  res.json({message: "Verification successful"})
-  }
-
-  const resendVerifyEmail = async(req, res) => {
-    const {email} = req.body;
-
-    const user = await User.findOne({email});
-    if (!user) {throw httpError(401, 'User not found')}
-    if (user.verify){ throw httpError(400, 'Verification has already been passed') }
-    
-    const verifyEmail = {
-      to: email,
-      subject: "Verify email",
-      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${user.verificationToken}">Click verify email</a>`
-    };
-
-    await sendEmail(verifyEmail);
-
-    res.json({ message: "Verification email sent" })
   }
 
   const signin = async (req, res) => {
@@ -119,6 +95,34 @@ const {SECRET_KEY, BASE_URL} = process.env;
     res.status(204).json({});
   }
 
+  const verifyEmail = async(req, res) => {
+    const {verificationToken} = req.params;
+  
+    const user = await User.findOne({verificationToken});
+    if (!user) { throw httpError(404, "User not found"); }
+  
+    await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: ""});
+  
+    res.json({message: "Verification successful"})
+  }
+  
+  const resendVerifyEmail = async(req, res) => {
+    const {email} = req.body;
+
+    const user = await User.findOne({email});
+    if (!user) {throw httpError(401, 'User not found')}
+    if (user.verify){ throw httpError(400, 'Verification has already been passed') }
+    
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${user.verificationToken}">Click verify email</a>`
+    };
+
+    await sendEmail(verifyEmail);
+
+    res.json({ message: "Verification email sent" })
+  }
 
 
 module.exports = {
