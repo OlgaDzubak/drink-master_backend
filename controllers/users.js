@@ -20,7 +20,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
   const updateUser  = async(req, res) => {
 
     if (req.fileValidationError){
-      throw httpError(500, "Wrong file format.");
+      throw httpError(422, "Wrong file format.");
     }
 
     let newUserName, newAvatarURL, usr;
@@ -31,7 +31,8 @@ const {SECRET_KEY, BASE_URL} = process.env;
     if (!name) { newUserName = currentUserName}
     else { newUserName = name};
     
-    if (!req.file){                                         
+    if (!req.file)
+      {                                         
         usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});
       }
     else{
@@ -71,6 +72,5 @@ module.exports = {
   getCurrent: ctrlWrapper(getCurrent),
   updateUser: ctrlWrapper(updateUser),
   subscribe: ctrlWrapper(subscribe),
- // updateAvatar: ctrlWrapper(updateAvatar),
 };
 
