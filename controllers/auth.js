@@ -23,7 +23,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const bd_Date = Date.parse(bd_str);
-    const avatarURL = gravatar.url(email);
+    const avatarURL = gravatar.url(email, {s: 50 });
     
     const newUser = await User.create({ ...req.body, 
                                         password: hashPassword, 

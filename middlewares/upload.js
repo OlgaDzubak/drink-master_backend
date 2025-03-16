@@ -15,21 +15,21 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     
     let folder;
+    let transformation = [{ height: 350, crop: "scale" }, { height: 700, crop: "scale" }];
+
     if (file.fieldname === 'avatar') {
       folder = 'avatars';
+      transformation =  [{ height: 100, crop: "scale" }];
     } else if (file.fieldname === "drinkThumb") {
       folder = "drinks";
     } else {
       folder = "others";
     }
     return {
-      folder: folder,
-      allowed_formats: ["jpg", "png"], 
-      public_id: file.originalname,    
-      transformation: [
-        { height: 350, crop: "scale" },
-        { height: 700, crop: "scale" },
-      ],
+      folder,
+      transformation,
+      public_id: file.originalname,
+      allowed_formats: ["jpg", "jpeg", "png"]
     };
   },
 });
