@@ -1,13 +1,13 @@
 const {User} = require("../db/models/user");
 const { httpError, ctrlWrapper, sendEmail } = require('../helpers');
-const {v4} = require('uuid');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const path = require("path");
-const fs = require("fs").promises;
-const gravatar = require("gravatar");
 require('dotenv').config();
 
+// const {v4} = require('uuid');
+// const gravatar = require("gravatar");
+// const path = require("path");
+// const fs = require("fs").promises;
 
 const {SECRET_KEY, BASE_URL} = process.env; 
 
@@ -23,7 +23,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const bd_Date = Date.parse(bd_str);
-    const avatarURL = gravatar.url(email, {s: 50 });
+    const avatarURL = "https://res.cloudinary.com/dxvnh0oip/image/upload/v1742159434/avatars/defaultUserAvatar_btmd8l.png"; //gravatar.url(email, {s: 50 });
     
     const newUser = await User.create({ ...req.body, 
                                         password: hashPassword, 

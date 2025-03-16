@@ -19,7 +19,11 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
   const updateUser  = async(req, res) => {
 
-    let newUserName, newAvatarURL;
+    if (req.fileValidationError){
+      throw httpError(500, "Wrong file format.");
+    }
+
+    let newUserName, newAvatarURL, usr;
     
     const {_id, name: currentUserName} = req.user;
     const {name} = req.body;
@@ -27,29 +31,15 @@ const {SECRET_KEY, BASE_URL} = process.env;
     if (!name) { newUserName = currentUserName}
     else { newUserName = name};
     
-    if (!req.file)
-      {                                         
-        const usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});
-        res.json({ name: usr.name, avatarURL: usr.avatarURL});   
+    if (!req.file){                                         
+        usr = await User.findByIdAndUpdate(_id, {name: newUserName}, {new: true});
       }
-    else
-      {
-        
+    else{
         newAvatarURL = req.file.path;
+        usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true});
+      } 
 
-        cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-          if (error) {   
-              console.error(error);
-              return res.status(500).json({ message: 'Помилка при завантаженні на Cloudinary' });
-          }
-          const { secure_url: newAvatarURL} = result;
-        
-        }).end(req.file.buffer);
-
-        const usr = await User.findByIdAndUpdate(_id, {name: newUserName, avatarURL: newAvatarURL}, {new: true});
-          
-        res.json({name: usr.name , avatarURL: usr.avatarURL });
-      }                
+      res.json({name: usr.name , avatarURL: usr.avatarURL });               
   }
 
   const subscribe = async(req, res) => {
