@@ -45,10 +45,11 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
   const subscribe = async(req, res) => {
       const {email, name} = req.user;
-       
+      const {subscriptionEmail} = req.body;
+
       // створюємо поштове повідомлення
        const EmailAboutSubscription = {
-        to: email,
+        to: subscriptionEmail,
         subject: `Subscription message from ${BASE_URL}`,
         html: ` <h1 style="font-size: 20px"> Hello, ${name}!</h1>
                 <p  style="font-size: 16px"> You are subscribed to our newsletters. </p>

@@ -4,10 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// const {v4} = require('uuid');
-// const gravatar = require("gravatar");
-// const path = require("path");
-// const fs = require("fs").promises;
 
 const {SECRET_KEY, BASE_URL} = process.env; 
 
