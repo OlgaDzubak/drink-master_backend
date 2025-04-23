@@ -29,14 +29,14 @@ const storage = new CloudinaryStorage({
       folder,
       transformation,
       public_id: file.originalname,
-      allowed_formats: ["jpg", "jpeg", "png"]
+      allowed_formats: ["jpeg", "jpg", "png", "avif", "bmp", "webp"], 
     };
   },
 });
 
 const upload = multer({ storage,
   fileFilter: (req, file, cb)=>{
-      const formatsArray = ['image/png', 'image/jpeg', 'image/jpg'];
+      const formatsArray = ['image/jpeg', 'image/jpg', 'image/png', 'image/avif', 'image/bmp', 'image/webp' ];
 
       if (formatsArray.indexOf(file.mimetype) === -1) {
         return cb(httpError(500,"Wrong file format!"));
