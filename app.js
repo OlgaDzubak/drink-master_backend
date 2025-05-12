@@ -18,7 +18,11 @@ const app = express();
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
-app.use(cors());
+
+const { CLIENT_URL } = process.env;
+const corsOptions = { origin: CLIENT_URL, optionsSuccessStatus: 200 };
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 app.use(express.static('public'));
