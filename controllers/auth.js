@@ -30,7 +30,8 @@ const {SECRET_KEY, BASE_URL} = process.env;
     
     //надсилаємо лист на адресу email для веріфікації цього імейлу
     const subject = "Drink Master. Request for verification login email";
-    const html = `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Verify email</a>`;
+    const html = `<p>This is the code for email verification ${verificationToken}</p>`;
+    // const html = `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Verify email</a>`;
     await sendEmail(email, subject, html);
     
     res.status(201).json( {
@@ -55,7 +56,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword){ throw httpError(401, "Email or Password is wrong"); }
 
-    if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
+    // if (!user.verify) { throw httpError(401,"Email or password is wrong");}  // перевіряємо чи пройшов email юзера верифікацію
 
     const payload = { id: user._id }; 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
