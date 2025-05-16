@@ -34,10 +34,6 @@ const userSchema = new Schema(
             required: [true, 'Birthdate is required'],
             default: now,
         },
-        sibscribeStatus: {
-            type: Boolean,
-            default: false,
-        },
 
         //дані з UserInfoModal (профайл юзера)
         avatarURL:{
@@ -51,14 +47,24 @@ const userSchema = new Schema(
             type : String,
             default: ""
         },
-        // verify: {
-        //     type: Boolean,
-        //     default: false,
-        // },
-        // verificationToken: {
-        //     type: String,
-        //     required: [true, 'Verify token is required'],
-        // },
+
+        subscribeStatus: {
+            type: Boolean,
+            default: false,
+        },
+        subscriptionEmail: {
+            type: String,
+            match: emailRegExp,
+            unique: true,
+        },
+        verify: {
+            type: Boolean,
+            default: false,
+        },
+        verificationToken: {
+            type: String,
+            required: [true, 'Verify token is required'],
+        },
 
     },
     {  
@@ -230,11 +236,30 @@ const emailSchema = Joi.object({
         }),
 });
 
+const subscriptionEmailSchema = Joi.object({
+    email: Joi.string().pattern(emailRegExp).error(errors => {
+            errors.forEach(err => {
+                switch (err.code) {
+                    case "string.empty":
+                                    err.message = "email field should not be empty!";
+                                    break;
+                    case "string.pattern.base" :
+                                    err.message = "email field must be a valid email!";
+                                    break;
+                    default:
+                                        break;
+                    }
+            });
+            return errors;
+    }),
+});
+
 const schemas = {
     signUpSchema,
     signInSchema,
     updateSchema,
     emailSchema,
+    subscriptionEmailSchema,
 }
 
 

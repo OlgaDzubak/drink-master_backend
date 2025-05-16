@@ -1,13 +1,8 @@
 const {User} = require("../db/models/user");
-const {ctrlWrapper, sendEmail } = require('../helpers');
-const {v4} = require('uuid');
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const path = require("path");
-const cloudinary = require('cloudinary').v2;
+const { ctrlWrapper } = require('../helpers');
 require('dotenv').config();
-
-const {SECRET_KEY, BASE_URL} = process.env;
+// const nodemailer = require("nodemailer");
+// const {NODEMAILER_EMAIL, NODEMAILER_PASS} = process.env;
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
@@ -41,30 +36,51 @@ const {SECRET_KEY, BASE_URL} = process.env;
       } 
 
       res.json({name: usr.name , avatarURL: usr.avatarURL });               
+}
+  
+  const verifyEmail = async(req, res) => {
+
+    const { verificationToken } = req.params;
+
+    const user = await User.findOne({verificationToken});
+    if (!user) { throw httpError(404, "User not found"); }
+
+    await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
+    
+    res.json({message: "Verification successful"})
+  }
+  
+
+  const resendVerifyEmail = async(req, res) => {
+    const {email} = req.body;
+
+    const user = await User.findOne({email});
+    if (!user) {throw httpError(401, 'User not found')}
+    if (user.verify){ throw httpError(400, 'Verification has already been passed') }
+    
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${BASE_URL}/auth/verify/${user.verificationToken}">Click verify email</a>`
+    };
+
+    await sendEmail(verifyEmail);
+
+    res.json({ message: "Verification email sent" })
   }
 
-  const subscribe = async(req, res) => {
-      const {email, name} = req.user;
-      const {subscriptionEmail} = req.body;
+  const subscribe = async (req, res) => {
+    
+    const {email, name} = req.user;
+    const { subscriptionEmail } = req.body;
 
-      // створюємо поштове повідомлення
-       const EmailAboutSubscription = {
-        to: subscriptionEmail,
-        subject: `Subscription message from ${BASE_URL}`,
-        html: ` <h1 style="font-size: 20px"> Hello, ${name}!</h1>
-                <p  style="font-size: 16px"> You are subscribed to our newsletters. </p>
-                <p  style="font-size: 16px"> You will recieve letters about our news and special offers, etc. </p>
-                <p  style="font-size: 16px"> Thank you! </p>
+    
+    res.json({
+      subscriptionEmail,
+      message: `Subscription successful. Letters about subscription was sent to your email ${subscriptionEmail}`
+    });
 
-                <p  style="font-size: 14px"> Visit our site! 
-                  <a target="_blank" href="https://dimachernyaev.github.io/drinkMaster-Team-1" style="font-size: 20px; font-wight:bolt">Drink Master web-site</a>
-                </p>`
-      };
-      
-      // відправляємо на email юзера лист з повіломленням про підписку
-      await sendEmail(EmailAboutSubscription);
-
-      res.json( { message: `Subscribtion successful. Letters about subscribtion was sent to your email ${email}` } );
+  
 
   }
 
@@ -73,5 +89,7 @@ module.exports = {
   getCurrent: ctrlWrapper(getCurrent),
   updateUser: ctrlWrapper(updateUser),
   subscribe: ctrlWrapper(subscribe),
+  verifyEmail: ctrlWrapper(verifyEmail),
+  resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
 };
 
