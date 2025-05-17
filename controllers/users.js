@@ -41,7 +41,8 @@ require('dotenv').config();
   const verifyEmail = async(req, res) => {
 
     const { verificationToken } = req.body;
-
+    console.log("verificationToken=", verificationToken);
+    
     const user = await User.findOne({verificationToken});
     if (!user) { throw httpError(404, "User not found"); }
 
@@ -50,7 +51,7 @@ require('dotenv').config();
     res.json({ message: "Verification successful" });
   }
   
-  
+
 
   const resendVerifyEmail = async(req, res) => {
     const {email} = req.body;
