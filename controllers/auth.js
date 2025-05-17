@@ -55,7 +55,14 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword){ throw httpError(401, "Email or Password is wrong"); }
 
-    if (!user.verify) { throw httpError(403,"Email verification not completed");}  // перевіряємо чи пройшов email юзера верифікацію
+    if (!user.verify) {
+      const verificationToken = v4();
+      const subject = "Drink Master. Request for verification login email";
+      const html = `<p>This is the code for email verification ${verificationToken}</p>`;
+      await sendEmail(email, subject, html);
+      
+      throw httpError(403, "Email verification not completed");
+    }  // перевіряємо чи пройшов email юзера верифікацію
 
     const payload = { id: user._id }; 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
