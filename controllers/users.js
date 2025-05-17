@@ -42,9 +42,9 @@ require('dotenv').config();
 
     const { verificationToken } = req.body;
     console.log("verificationToken=", verificationToken);
-    
+
     const user = await User.findOne({verificationToken});
-    if (!user) { throw httpError(404, "User not found"); }
+    if (!user) { throw httpError(403, "Verification failed"); }
 
     await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
     
