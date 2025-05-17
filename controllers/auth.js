@@ -60,7 +60,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
       const subject = "Drink Master. Request for verification login email";
       const html = `<p>This is the code for email verification ${user.verificationToken}</p>`;
       await sendEmail(email, subject, html);
-      throw httpError(403, "Email verification not completed");
+      //throw httpError(403, "Email verification not completed");
     }
 
     const payload = { id: user._id }; 
@@ -75,6 +75,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "avatarURL": user.avatarURL,
         "birthdate": user.birthdate,
         "subscribeStatus": user.subscribeStatus,
+        "verify": user.verify,
       }
     });
   }
