@@ -1,8 +1,7 @@
 const {User} = require("../db/models/user");
-const { ctrlWrapper } = require('../helpers');
+const {httpError, ctrlWrapper } = require('../helpers');
 require('dotenv').config();
-// const nodemailer = require("nodemailer");
-// const {NODEMAILER_EMAIL, NODEMAILER_PASS} = process.env;
+
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
