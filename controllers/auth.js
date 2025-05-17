@@ -74,7 +74,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "email": user.email,
         "avatarURL": user.avatarURL,
         "birthdate": user.birthdate,
-        "subscribeStatus": newUser.subscribeStatus,
+        "subscribeStatus": user.subscribeStatus,
       }
     });
   }
