@@ -50,6 +50,7 @@ require('dotenv').config();
     res.json({ message: "Verification successful" });
   }
   
+  
 
   const resendVerifyEmail = async(req, res) => {
     const {email} = req.body;
