@@ -7,8 +7,8 @@ require('dotenv').config();
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ USERS (для залогіненого юзера) -----------------------------
 
   const getCurrent = async(req, res) => {
-    const {id, name, email, avatarURL} = req.user;
-    res.status(200).json({id, name, email, avatarURL});
+    const {id, name, email, avatarURL, birthdate, subscribeStatus, verify} = req.user;
+    res.status(200).json({id, name, email, avatarURL, birthdate, subscribeStatus, verify});
   }
 
   const updateUser  = async(req, res) => {
