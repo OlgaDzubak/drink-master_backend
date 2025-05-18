@@ -74,8 +74,20 @@ require('dotenv').config();
     const user = await User.findById(_id);
     if (!user) { throw httpError(401, "Not authorized"); }
     if (!user.verify) { throw httpError(403, "Email is not verified") }
-    const newUser = await User.findByIdAndUpdate(_id, {subscribeStatus: true});
-       
+    const newUser = await User.findByIdAndUpdate(_id, { subscribeStatus: true });
+
+    const subject = "Drink Master. Subscription activated.";
+    const html = `<h1>Hello ${user.name}!</h1>
+                  <p>You reсeived this message from Drink Master application</p>
+                  <p>Your subscription activated. You will be in touch with latest news and our special offers</p>
+                  <p>visit our site
+                    <span>
+                      <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
+                    </span>
+                    and enjoy the biggest coctail collection from our connoisseurs community.
+                  </p>`;
+    await sendEmail(email, subject, html);
+
     res.status(200).json({
       email: newUser.email,
       message: `Subscription successful. Letters about subscription was sent to your email ${newUser.email}`
@@ -88,9 +100,24 @@ require('dotenv').config();
     const user = await User.findByIdAndUpdate(_id, {subscribeStatus: false});
     if (!user) { throw httpError(401, "Not authorized"); }       
 
+    const subject = "Drink Master. Subscription canceled.";
+    const html = `<h1>Hello ${user.name}!</h1>
+                  <p>You reсeived this message from Drink Master application</p>
+                  <p>Your subscription canceled</p>
+                  <p>НYou can activate subscription again on the site.</p>
+                  <p>visit our site
+                    <span>
+                      <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
+                    </span>
+                    and enjoy the biggest coctail collection from our connoisseurs community.
+                  </p>`;
+
+      ;
+    await sendEmail(email, subject, html);
+
     res.status(200).json({
       email: user.email,
-      message: 'Subscription is canceled'
+      message: 'Subscription canceled'
     });
 }
   
