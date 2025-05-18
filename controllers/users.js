@@ -40,7 +40,6 @@ require('dotenv').config();
   const verifyEmail = async(req, res) => {
 
     const { verificationToken } = req.body;
-    console.log("verificationToken=", verificationToken);
 
     const user = await User.findOne({verificationToken});
     if (!user) { throw httpError(403, "Verification failed"); }
