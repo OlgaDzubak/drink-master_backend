@@ -40,6 +40,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
         "avatarURL": newUser.avatarURL,
         "birthdate": newUser.birthdate,
         "subscribeStatus": newUser.subscribeStatus,
+        "verify": false,
       }
     });
     
