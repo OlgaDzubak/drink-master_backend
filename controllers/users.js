@@ -53,10 +53,10 @@ require('dotenv').config();
 
     const { _id } = req.user;
     
-    const user = await User.findById(_id);
+    let user = await User.findById(_id);
     if (!user) { throw httpError(401, "Not authorized"); }
     if (!user.verify) { throw httpError(403, "Email is not verified") }
-    const newUser = await User.findByIdAndUpdate(_id, { subscribeStatus: true });
+    user = await User.findByIdAndUpdate(_id, { subscribeStatus: true });
 
     const subject = "Drink Master. Subscription activated.";
     const html = `<h1>Hello ${user.name}!</h1>
@@ -68,11 +68,11 @@ require('dotenv').config();
                     </span>
                     and enjoy the biggest coctail collection from our connoisseurs community.
                   </p>`;
-    await sendEmail(email, subject, html);
+    await sendEmail(user.email, subject, html);
 
     res.status(200).json({
-      email: newUser.email,
-      message: `Subscription successful. Letters about subscription was sent to your email ${newUser.email}`
+      email: user.email,
+      message: `Subscription successful. Letters about subscription was sent to your email ${user.email}`
     });
   }
 
@@ -95,7 +95,7 @@ require('dotenv').config();
                   </p>`;
 
       ;
-    await sendEmail(email, subject, html);
+    await sendEmail(user.email, subject, html);
 
     res.status(200).json({
       email: user.email,
