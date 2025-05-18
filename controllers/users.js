@@ -76,7 +76,10 @@ require('dotenv').config();
     if (!user.verify) { throw httpError(403, "Email is not verified") }
     const newUser = await User.findByIdAndUpdate(_id, {subscribeStatus: true});
        
-    res.status(200).json({message: `Subscription successful. Letters about subscription was sent to your email ${newUser.email}`});
+    res.status(200).json({
+      email: newUser.email,
+      message: `Subscription successful. Letters about subscription was sent to your email ${newUser.email}`
+    });
   }
 
   const unsubscribe = async (req, res) => {
@@ -85,7 +88,10 @@ require('dotenv').config();
     const user = await User.findByIdAndUpdate(_id, {subscribeStatus: false});
     if (!user) { throw httpError(401, "Not authorized"); }       
 
-    res.status(200).json({ message: 'Subscription is canceled' });
+    res.status(200).json({
+      email: user.email,
+      message: 'Subscription is canceled'
+    });
 }
   
 module.exports = {
