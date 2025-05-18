@@ -33,7 +33,13 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const html = `<p>This is the code for email verification ${verificationToken}</p>`;
     await sendEmail(email, subject, html);
     
-    res.status(201).json( {
+    
+    const payload = { id: user._id }; 
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+    await User.findByIdAndUpdate(user._id, { token });
+
+    res.status(201).json({
+      token,
       "user": {
         "name": newUser.name,
         "email": newUser.email,
