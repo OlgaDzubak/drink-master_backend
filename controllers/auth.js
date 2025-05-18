@@ -34,9 +34,9 @@ const {SECRET_KEY, BASE_URL} = process.env;
     await sendEmail(email, subject, html);
     
     
-    const payload = { id: user._id }; 
+    const payload = { id: newUser._id }; 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(user._id, { token });
+    await User.findByIdAndUpdate(newUser._id, { token });
 
     res.status(201).json({
       token,
