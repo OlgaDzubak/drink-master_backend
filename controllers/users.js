@@ -62,7 +62,7 @@ require('dotenv').config();
     const html = `<h1>Hello ${user.name}!</h1>
                   <p>You reсeived this message from Drink Master application</p>
                   <p>Your subscription activated. You will be in touch with latest news and our special offers</p>
-                  <p>visit our site
+                  <p>Visit our site
                     <span>
                       <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
                     </span>
@@ -86,13 +86,12 @@ require('dotenv').config();
     const html = `<h1>Hello ${user.name}!</h1>
                   <p>You reсeived this message from Drink Master application</p>
                   <p>Your subscription canceled</p>
-                  <p>НYou can activate subscription again on the site.</p>
-                  <p>visit our site
+                  <p>To activate subscription again visit our site
                     <span>
                       <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
                     </span>
-                    and enjoy the biggest coctail collection from our connoisseurs community.
-                  </p>`;
+                  </p>
+                  <p>Enjoy the biggest coctail collection from our connoisseurs community.</p>`;
 
       ;
     await sendEmail(user.email, subject, html);
