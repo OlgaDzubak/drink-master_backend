@@ -26,8 +26,6 @@ const sendEmail = async (subscriptionEmail, subject, html) => {
   };
 
   await transporter.sendMail(emailOptions);
-            //  .then(info => console.log(info))
-  //  .catch(err => console.log(err));
   return true;  
 };
 

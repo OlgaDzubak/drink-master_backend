@@ -65,7 +65,23 @@ const {SECRET_KEY, BASE_URL} = process.env;
     // перевіряємо чи пройшов email юзера верифікацію, якщо ні, то повторно відправляємо на email юзера лист з токеном верифікації
     if (!user.verify) {
       const subject = "Drink Master. Request for verification login email";
-      const html = `<p>This is the code for email verification ${user.verificationToken}</p>`;
+      const html = `<div>
+
+                      <h1>Hello ${user.name}!</h1>
+
+                      <p>You reсeived this message from Drink Master application.</p>
+                      
+                      <p style="display: inline;">This is the code for email verification:</p>
+                      <p style="font-size:18px; font-weight:600;">${user.verificationToken}</p>
+
+                      <p style="font-size:16px; font-weight: 600;">Visit our site
+                        <span><a href='https://olgadzubak.github.io/drink-master' target='blank' rel="noopener noreferrer" >Drink Master</a></span>
+                        and enjoy the biggest coctail collection from our connoisseurs community.
+                      </p>
+
+                    </div>`;
+      
+
       await sendEmail(email, subject, html);
       //throw httpError(403, "Email verification not completed");
     }
