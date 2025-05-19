@@ -62,10 +62,8 @@ require('dotenv').config();
     const html = `<h1>Hello ${user.name}!</h1>
                   <p>You reсeived this message from Drink Master application</p>
                   <p>Your subscription activated. You will be in touch with latest news and our special offers</p>
-                  <p style="font-size:18px; font-weight: 600;">Visit our site
-                    <span>
-                      <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
-                    </span>
+                  <p style="font-size:16px; font-weight: 600;">Visit our site
+                    <span><a href='https://olgadzubak.github.io/drink-master' target='blank' rel="noopener noreferrer" >Drink Master</a></span>
                     and enjoy the biggest coctail collection from our connoisseurs community.
                   </p>`;
     await sendEmail(user.email, subject, html);
@@ -82,14 +80,12 @@ require('dotenv').config();
     const user = await User.findByIdAndUpdate(_id, {subscribeStatus: false});
     if (!user) { throw httpError(401, "Not authorized"); }       
 
-    const subject = "Drink Master. Subscription canceled.";
+    const subject = "Drink Master. Subscription cancelled.";
     const html = `<h1>Hello ${user.name}!</h1>
                   <p>You reсeived this message from Drink Master application</p>
-                  <p>Your subscription canceled</p>
-                  <p style="font-size:18px; font-weight: 600;">To activate subscription again visit our site
-                    <span>
-                      <a href='https://olgadzubak.github.io/drink-master' target='blank' noopener noreferrer >Drink Master</a>
-                    </span>
+                  <p>Your subscription cancelled</p>
+                  <p style="font-size:16px; font-weight: 600;">To activate subscription again visit our site
+                    <span><a href='https://olgadzubak.github.io/drink-master' target='blank' rel="noopener noreferrer" >Drink Master</a></span>
                   </p>
                   <p>Enjoy the biggest coctail collection from our connoisseurs community.</p>`;
 
@@ -98,7 +94,7 @@ require('dotenv').config();
 
     res.status(200).json({
       email: user.email,
-      message: 'Subscription canceled'
+      message: 'Subscription cancelled'
     });
 }
   
