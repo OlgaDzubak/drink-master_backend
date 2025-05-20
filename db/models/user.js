@@ -1,9 +1,6 @@
 const { Schema, model } = require("mongoose"); 
 const Joi = require('joi').extend(require('@joi/date'));
 
-
-//const joi = require("joi");
-
 const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const now = new Date();
