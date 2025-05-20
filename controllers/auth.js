@@ -10,7 +10,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
   const signup = async (req, res) => {
 
-    const {email, password, birthdate: bd_str} = req.body;
+    const {name, email, password, birthdate: bd_str} = req.body;
     
     const user = await User.findOne({email});
     if (user) {
@@ -21,7 +21,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const avatarURL = "https://res.cloudinary.com/dxvnh0oip/image/upload/v1742159434/avatars/defaultUserAvatar_btmd8l.png";
     const verificationToken = v4();
    
-    const newUser = await User.create({ ...req.body, 
+    const newUser = await User.create({ name, 
                                         password: hashPassword, 
                                         birthdate: bd_Date, 
                                         avatarURL,
