@@ -13,7 +13,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const {name, email, password, birthdate: bd_str} = req.body;
     
     console.log("req.body", req.body);
-    
+
     const user = await User.findOne({email});
     if (user) {
       throw httpError(409, "Email in use");
@@ -34,19 +34,19 @@ const {SECRET_KEY, BASE_URL} = process.env;
     //надсилаємо лист на адресу email для веріфікації цього імейлу
     const subject = "Drink Master. Request for verification login email";
     const html = `<div>
-                    <h1>Hello ${user.name}!</h1>
+                    <h1>Hello ${newUser.name}!</h1>
 
                     <p>You reсeived this message from Drink Master application.</p>
                     
                     <p style="display: inline;">This is the code for email verification:</p>
-                    <p style="font-size:18px; font-weight:600;">${user.verificationToken}</p>
+                    <p style="font-size:18px; font-weight:600;">${newUser.verificationToken}</p>
 
                     <p style="font-size:16px; font-weight: 600;">Visit our site
                       <span><a href='https://olgadzubak.github.io/drink-master' target='blank' rel="noopener noreferrer" >Drink Master</a></span>
                       and enjoy the biggest coctail collection from our connoisseurs community.
                     </p>
                   </div>`;
-    await sendEmail(email, subject, html);
+    await sendEmail(newUser.email, subject, html);
     
     
     const payload = { id: newUser._id }; 
