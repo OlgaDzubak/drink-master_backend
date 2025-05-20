@@ -12,6 +12,8 @@ const {SECRET_KEY, BASE_URL} = process.env;
 
     const {name, email, password, birthdate: bd_str} = req.body;
     
+    console.log("req.body", req.body);
+    
     const user = await User.findOne({email});
     if (user) {
       throw httpError(409, "Email in use");
@@ -26,7 +28,8 @@ const {SECRET_KEY, BASE_URL} = process.env;
                                         password: hashPassword, 
                                         birthdate: bd_Date, 
                                         avatarURL,
-                                        verificationToken});
+                                        verificationToken,
+                                      });
     
     //надсилаємо лист на адресу email для веріфікації цього імейлу
     const subject = "Drink Master. Request for verification login email";
