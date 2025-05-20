@@ -22,6 +22,7 @@ const {SECRET_KEY, BASE_URL} = process.env;
     const verificationToken = v4();
    
     const newUser = await User.create({ name, 
+                                        email,
                                         password: hashPassword, 
                                         birthdate: bd_Date, 
                                         avatarURL,
