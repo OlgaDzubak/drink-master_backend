@@ -52,11 +52,6 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
-        subscriptionEmail: {
-            type: String,
-            match: emailRegExp,
-            unique: true,
-        },
         verify: {
             type: Boolean,
             default: false,
@@ -236,30 +231,11 @@ const emailSchema = Joi.object({
         }),
 });
 
-const subscriptionEmailSchema = Joi.object({
-    email: Joi.string().pattern(emailRegExp).error(errors => {
-            errors.forEach(err => {
-                switch (err.code) {
-                    case "string.empty":
-                                    err.message = "email field should not be empty!";
-                                    break;
-                    case "string.pattern.base" :
-                                    err.message = "email field must be a valid email!";
-                                    break;
-                    default:
-                                        break;
-                    }
-            });
-            return errors;
-    }),
-});
-
 const schemas = {
     signUpSchema,
     signInSchema,
     updateSchema,
     emailSchema,
-    subscriptionEmailSchema,
 }
 
 
