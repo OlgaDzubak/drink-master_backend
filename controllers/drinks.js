@@ -3,7 +3,6 @@ const { Recipe } = require('../db/models/recipe');
 const { httpError, ctrlWrapper} = require('../helpers/');
 const { mongoose } = require("mongoose");
 const {differenceInYears} = require('date-fns');
-const cloudinary = require('cloudinary').v2;
 
 
 //------ КОНТРОЛЛЕРИ ДЛЯ РОБОТИ ІЗ КОЛЛЕКЦІЄЮ RECIPES ( для маршрута /drinks) ----------------------------
@@ -78,32 +77,34 @@ const cloudinary = require('cloudinary').v2;
     }
 
     const searchDrinks = async (req, res) => {
-  try {
-    const userBirthDate = req.user.birthdate;
-    const currentDate = new Date();
-    const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
+      
+      try {
+        
+        const userBirthDate = req.user.birthdate;
+        const currentDate = new Date();
+        const ageFilter = differenceInYears(currentDate, userBirthDate) >= 18;
 
-    const { category, ingredient, keyword, page, per_page } = req.query;
+        const { category, ingredient, keyword, page, per_page } = req.query;
 
-    const currentPage = parseInt(page) || 1;
-    const limit = parseInt(per_page) || 10;
-    const skip = (currentPage - 1) * limit;
+        const currentPage = parseInt(page) || 1;
+        const limit = parseInt(per_page) || 10;
+        const skip = (currentPage - 1) * limit;
 
-    const alcoholicFilter = ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic';
+        const alcoholicFilter = ageFilter ? { $in: ['Alcoholic', 'Non alcoholic'] } : 'Non alcoholic';
 
-    const query = {
-      $and: [
-        category ? { category } : {},
-        ingredient ? { 'ingredients.title': { $regex: ingredient, $options: 'i' } } : {},
-        keyword ? {
-          $or: [
-            { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
-            { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
-            { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
-           ],
-         } : {},
-         { alcoholic: alcoholicFilter },
-          ],
+        const query = {
+          $and: [
+            category ? { category } : {},
+            ingredient ? { 'ingredients.title': { $regex: ingredient, $options: 'i' } } : {},
+            keyword ? {
+              $or: [
+                { drink: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { instructions: { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+                { 'ingredients.title': { $regex: keyword.replace(' ', '[^\S]'), $options: 'i' } },
+              ],
+            } : {},
+            { alcoholic: alcoholicFilter },
+              ],
         };
 
         const totalResults = await Recipe.countDocuments(query);
@@ -114,9 +115,10 @@ const cloudinary = require('cloudinary').v2;
           .select('_id drink drinkThumb category instructions description shortDescription ingredients.title');
 
         res.status(200).json({ drinks, totalResults });
+
       } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
+          console.error(error);
+          res.status(500).json({ error: 'Помилка при пошуку коктейлів' });
       }
     };
 

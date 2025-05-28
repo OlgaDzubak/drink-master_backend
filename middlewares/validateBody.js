@@ -3,6 +3,7 @@ const { httpError } = require('../helpers');
   
 const validateBody = (schema) => {
     const func = (req, res, next) => {
+        console.log(validateBody);
         console.log(req.body);
         if (!Object.keys(req.body).length)
         {            
