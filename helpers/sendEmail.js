@@ -6,14 +6,15 @@ const { NODEMAILER_EMAIL, NODEMAILER_PASS } = process.env;
 const sendEmail = async (subscriptionEmail, subject, html) => {
   
   const config = {
-    service: "gmail",
+    //service: "gmail",
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
       user: NODEMAILER_EMAIL,
       pass: NODEMAILER_PASS,
     },
+    connectionTimeout: 5000,
     logger: true,  // Логування в консоль
     debug: true    // Деталі налагодження
   };
