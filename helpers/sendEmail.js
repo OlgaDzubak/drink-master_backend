@@ -8,8 +8,8 @@ const sendEmail = async (subscriptionEmail, subject, html) => {
   const config = {
     service: "gmail",
     //host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465, //587,
+    secure: true, //false,
     auth: {
       user: NODEMAILER_EMAIL,
       pass: NODEMAILER_PASS,
