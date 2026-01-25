@@ -17,7 +17,7 @@ const sendEmail = async (subscriptionEmail, subject, html) => {
   };
   
   const transporter = nodemailer.createTransport(config);
-
+  
   const emailOptions = {
       from: NODEMAILER_EMAIL,
       to: subscriptionEmail,
