@@ -7,13 +7,15 @@ const sendEmail = async (subscriptionEmail, subject, html) => {
   
   const config = {
     service: "gmail",
-    host: 'smtp.gmail.com',
+    //host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
       user: NODEMAILER_EMAIL,
       pass: NODEMAILER_PASS,
     },
+    logger: true,  // Логування в консоль
+    debug: true    // Деталі налагодження
   };
   
   const transporter = nodemailer.createTransport(config);
