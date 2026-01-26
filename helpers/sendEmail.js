@@ -1,29 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const { NODEMAILER_EMAIL, NODEMAILER_PASS} = process.env;
+const { NODEMAILER_EMAIL, NODEMAILER_PASS } = process.env;
 
-//import { Resend } from 'resend';
-//require("dotenv").config();
-//const { RESEND_API_KEY, RESEND_EMAIL } = process.env;
-//const resend = new Resend(RESEND_API_KEY);
-
-// const sendEmail = async (subscriptionEmail, subject, html) => {
-   
-//   const emailOptions = {
-//     from: RESEND_EMAIL,
-//     to: subscriptionEmail,
-//     subject,
-//     html,
-//   };
-  
-//   const { data, error } = await resend.emails.send(emailOptions)
-
-//   if (error) {
-//     console.error({ error });
-//   }
-
-//   console.log({ data });
-// };
 
 const sendEmail = async (subscriptionEmail, subject, html) => {
   
@@ -36,8 +14,8 @@ const sendEmail = async (subscriptionEmail, subject, html) => {
       user: NODEMAILER_EMAIL,
       pass: NODEMAILER_PASS,
     },
-    logger: true,  // Логування в консоль
-    debug: true    // Деталі налагодження
+    logger: true,
+    debug: true,
   };
   
   const transporter = nodemailer.createTransport(config);
